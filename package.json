@@ -1,0 +1,14 @@
+{
+  "name": "ibm-dpe-summary-2026",
+  "version": "1.0.0",
+  "description": "IBM Digital Product Engineering Intelligence Report",
+  "private": true,
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static HTML site - no build needed'",
+    "lint": "echo 'No linting configured for static HTML'"
+  },
+  "dependencies": {
+    "@vercel/analytics": "^1.4.1"
+  }
+}
