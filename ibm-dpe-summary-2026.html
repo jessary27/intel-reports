@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IBM Digital Product Engineering — Intelligence Report</title>
+<meta name="description" content="Executive analysis of IBM Consulting Digital Product Engineering: offering, market position, roles, skills, and 6-12 month outlook.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+:root {
+  --font-display: 'IBM Plex Serif', Georgia, serif;
+  --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Courier New', monospace;
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+  --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+  --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+  --text-3xl: clamp(2.5rem, 1rem + 4vw, 5rem);
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;
+  --space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;--space-20:5rem;
+  --radius-sm:.25rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
+  --transition:180ms cubic-bezier(0.16,1,0.3,1);
+  --content-default:900px;--content-wide:1200px;
+}
+:root,[data-theme="dark"] {
+  --color-bg:#0f1117;--color-surface:#161820;--color-surface-2:#1c1f2b;
+  --color-surface-offset:#222535;--color-surface-dynamic:#2a2e42;
+  --color-divider:#2d3145;--color-border:#363a52;
+  --color-text:#e2e4ef;--color-text-muted:#8b8fa8;--color-text-faint:#565a72;
+  --color-primary:#4589ff;--color-primary-hover:#6ea6ff;
+  --color-primary-highlight:rgba(69,137,255,0.12);--color-primary-glow:rgba(69,137,255,0.07);
+  --color-green:#42be65;--color-yellow:#f1c21b;--color-orange:#ff832b;
+  --color-red:#fa4d56;--color-purple:#a56eff;--color-cyan:#33b1ff;--color-teal:#08bdba;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 4px 16px rgba(0,0,0,.4);--shadow-lg:0 12px 40px rgba(0,0,0,.5);
+}
+[data-theme="light"] {
+  --color-bg:#f4f5f9;--color-surface:#ffffff;--color-surface-2:#f8f9fc;
+  --color-surface-offset:#eef0f6;--color-surface-dynamic:#e4e7f0;
+  --color-divider:#d9dce8;--color-border:#c8ccd8;
+  --color-text:#121624;--color-text-muted:#5a5f7a;--color-text-faint:#9ea3b8;
+  --color-primary:#0f62fe;--color-primary-hover:#0050e6;
+  --color-primary-highlight:rgba(15,98,254,0.08);--color-primary-glow:rgba(15,98,254,0.04);
+  --color-green:#198038;--color-yellow:#b28600;--color-orange:#e36000;
+  --color-red:#da1e28;--color-purple:#7c3dd6;--color-cyan:#0072c3;--color-teal:#007d79;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.08);--shadow-md:0 4px 16px rgba(0,0,0,.1);--shadow-lg:0 12px 40px rgba(0,0,0,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;scroll-padding-top:4rem;-webkit-text-size-adjust:none;text-size-adjust:none;}
+body{font-family:var(--font-body);font-size:var(--text-base);color:var(--color-text);background-color:var(--color-bg);min-height:100dvh;line-height:1.65;-webkit-font-smoothing:antialiased;}
+img{display:block;max-width:100%;height:auto;}
+h1,h2,h3,h4,h5,h6{text-wrap:balance;line-height:1.2;font-family:var(--font-display);}
+p,li{text-wrap:pretty;}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit;}
+a{color:inherit;transition:color var(--transition);}
+::selection{background:var(--color-primary-highlight);color:var(--color-text);}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm);}
+
+/* scroll animations */
+.fade-in{opacity:1;}
+@supports (animation-timeline: scroll()) {
+  .fade-in{opacity:0;animation:reveal-fade linear both;animation-timeline:view();animation-range:entry 0% entry 60%;}
+}
+@keyframes reveal-fade{to{opacity:1;}}
+
+/* reading progress */
+.reading-progress{position:fixed;top:0;left:0;width:0%;height:2px;background:var(--color-primary);z-index:200;transition:width .1s linear;}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:color-mix(in oklab,var(--color-bg) 85%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--color-divider);}
+.nav-inner{max-width:var(--content-wide);margin-inline:auto;padding:var(--space-3) var(--space-6);display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);}
+.nav-logo{display:flex;align-items:center;gap:var(--space-2);text-decoration:none;flex-shrink:0;}
+.nav-logo-text{font-family:var(--font-mono);font-size:var(--text-xs);font-weight:500;color:var(--color-text-muted);letter-spacing:.02em;}
+.nav-links{display:flex;align-items:center;gap:var(--space-1);list-style:none;overflow-x:auto;scrollbar-width:none;}
+.nav-links::-webkit-scrollbar{display:none;}
+.nav-links a{font-size:var(--text-xs);font-weight:500;color:var(--color-text-muted);text-decoration:none;padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);transition:color var(--transition),background var(--transition);white-space:nowrap;}
+.nav-links a:hover{color:var(--color-text);background:var(--color-surface-offset);}
+.nav-actions{display:flex;align-items:center;gap:var(--space-2);flex-shrink:0;}
+.btn-icon{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:var(--radius-md);color:var(--color-text-muted);transition:color var(--transition),background var(--transition);}
+.btn-icon:hover{color:var(--color-text);background:var(--color-surface-offset);}
+.report-date{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-faint);}
+
+/* HERO */
+.hero{padding:clamp(var(--space-16),10vw,var(--space-20)) 0 var(--space-12);border-bottom:1px solid var(--color-divider);position:relative;overflow:hidden;}
+.hero-grid-bg{position:absolute;inset:0;opacity:.025;background-image:linear-gradient(var(--color-primary) 1px,transparent 1px),linear-gradient(90deg,var(--color-primary) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;}
+.hero-glow{position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:800px;height:400px;background:radial-gradient(ellipse,var(--color-primary-glow) 0%,transparent 70%);pointer-events:none;}
+.hero-inner{position:relative;z-index:1;max-width:var(--content-wide);margin-inline:auto;padding-inline:var(--space-6);}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:var(--space-2);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-primary);letter-spacing:.1em;text-transform:uppercase;margin-bottom:var(--space-6);padding:var(--space-1) var(--space-3);border:1px solid var(--color-primary-highlight);border-radius:var(--radius-full);background:var(--color-primary-highlight);}
+.hero-title{font-family:var(--font-display);font-size:var(--text-3xl);font-weight:400;line-height:1.05;color:var(--color-text);max-width:800px;margin-bottom:var(--space-6);}
+.hero-title em{font-style:italic;color:var(--color-primary);}
+.hero-subtitle{font-size:var(--text-lg);color:var(--color-text-muted);max-width:620px;line-height:1.55;margin-bottom:var(--space-10);}
+.hero-meta{display:flex;flex-wrap:wrap;gap:var(--space-4);align-items:center;}
+.hero-meta-item{display:flex;align-items:center;gap:var(--space-2);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-faint);}
+.hero-meta-item .dot{width:6px;height:6px;border-radius:var(--radius-full);background:var(--color-primary);flex-shrink:0;}
+
+/* EXEC BAR */
+.exec-bar{background:var(--color-surface);border-bottom:1px solid var(--color-divider);padding:var(--space-8) 0;}
+.exec-bar-inner{max-width:var(--content-wide);margin-inline:auto;padding-inline:var(--space-6);}
+.exec-bar-label{font-family:var(--font-mono);font-size:var(--text-xs);font-weight:500;color:var(--color-primary);text-transform:uppercase;letter-spacing:.12em;margin-bottom:var(--space-4);}
+.exec-summary-text{font-size:var(--text-lg);font-family:var(--font-display);font-weight:400;color:var(--color-text);line-height:1.6;max-width:860px;}
+.exec-summary-text strong{font-weight:600;}
+
+/* KPI STRIP */
+.kpi-strip{padding:var(--space-8) 0;border-bottom:1px solid var(--color-divider);}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--color-divider);border:1px solid var(--color-divider);border-radius:var(--radius-lg);overflow:hidden;}
+.kpi-card{background:var(--color-surface);padding:var(--space-5) var(--space-6);display:flex;flex-direction:column;gap:var(--space-1);transition:background var(--transition);}
+.kpi-card:hover{background:var(--color-surface-offset);}
+.kpi-value{font-family:var(--font-mono);font-size:var(--text-xl);font-weight:500;color:var(--color-text);line-height:1;}
+.kpi-value.up{color:var(--color-green);}.kpi-value.warn{color:var(--color-yellow);}.kpi-value.down{color:var(--color-red);}
+.kpi-label{font-size:var(--text-xs);color:var(--color-text-muted);font-weight:500;}
+.kpi-note{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-faint);margin-top:var(--space-1);}
+
+/* MAIN LAYOUT */
+.main-layout{display:grid;grid-template-columns:220px 1fr;max-width:var(--content-wide);margin-inline:auto;}
+.sidebar{position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--color-border) transparent;padding:var(--space-8) 0;border-right:1px solid var(--color-divider);}
+.sidebar-section{padding-inline:var(--space-4);margin-bottom:var(--space-6);}
+.sidebar-label{font-family:var(--font-mono);font-size:var(--text-xs);font-weight:500;color:var(--color-text-faint);text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--space-2);padding-inline:var(--space-3);}
+.toc-link{display:block;font-size:var(--text-sm);color:var(--color-text-muted);text-decoration:none;padding:var(--space-2) var(--space-3);border-radius:var(--radius-md);border-left:2px solid transparent;transition:all var(--transition);line-height:1.4;}
+.toc-link:hover{color:var(--color-text);background:var(--color-surface-offset);border-left-color:var(--color-primary);}
+.toc-link.active{color:var(--color-primary);background:var(--color-primary-highlight);border-left-color:var(--color-primary);}
+.toc-sub .toc-link{font-size:var(--text-xs);padding:var(--space-1) var(--space-3);padding-left:calc(var(--space-3) + var(--space-4));}
+
+/* ARTICLE */
+.article{padding:var(--space-10) var(--space-10) var(--space-20);min-width:0;}
+.section-block{padding-block:var(--space-12);border-bottom:1px solid var(--color-divider);}
+.section-block:last-child{border-bottom:none;}
+.section-eyebrow{display:flex;align-items:center;gap:var(--space-2);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-primary);text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--space-4);}
+.section-eyebrow .num{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:var(--radius-sm);background:var(--color-primary-highlight);font-size:10px;color:var(--color-primary);flex-shrink:0;}
+.section-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:600;color:var(--color-text);margin-bottom:var(--space-4);line-height:1.15;}
+.section-title em{font-style:italic;color:var(--color-primary);}
+.section-lead{font-size:var(--text-lg);color:var(--color-text-muted);line-height:1.65;margin-bottom:var(--space-8);max-width:720px;font-family:var(--font-display);font-style:italic;}
+.body-text{font-size:var(--text-base);color:var(--color-text);line-height:1.7;max-width:72ch;margin-bottom:var(--space-5);}
+.body-text strong{font-weight:600;}
+
+/* CALLOUT */
+.callout{background:var(--color-surface);border:1px solid var(--color-divider);border-left:3px solid var(--color-primary);border-radius:var(--radius-md);padding:var(--space-5) var(--space-6);margin-bottom:var(--space-6);}
+.callout--warn{border-left-color:var(--color-yellow);}.callout--danger{border-left-color:var(--color-red);}.callout--green{border-left-color:var(--color-green);}
+.callout-label{font-family:var(--font-mono);font-size:var(--text-xs);font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:var(--space-2);}
+.callout .callout-label{color:var(--color-primary);}.callout--warn .callout-label{color:var(--color-yellow);}.callout--danger .callout-label{color:var(--color-red);}.callout--green .callout-label{color:var(--color-green);}
+.callout-text{font-size:var(--text-base);color:var(--color-text);line-height:1.65;}
+.callout-text strong{font-weight:600;}
+
+/* PULL QUOTE */
+.pull-quote{margin:var(--space-8) 0;padding:var(--space-6) 0 var(--space-6) var(--space-6);border-left:2px solid var(--color-primary);}
+.pull-quote-text{font-family:var(--font-display);font-size:var(--text-lg);font-style:italic;color:var(--color-text);line-height:1.5;}
+.pull-quote-attr{margin-top:var(--space-3);font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-faint);text-transform:uppercase;letter-spacing:.08em;}
+
+/* CAPABILITY GRID */
+.capability-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--color-divider);border:1px solid var(--color-divider);border-radius:var(--radius-xl);overflow:hidden;margin-bottom:var(--space-8);}
+.cap-cell{background:var(--color-surface);padding:var(--space-5);transition:background var(--transition);}
+.cap-cell:hover{background:var(--color-surface-offset);}
+.cap-cell-header{display:flex;align-items:flex-start;gap:var(--space-3);margin-bottom:var(--space-3);}
+.cap-icon{flex-shrink:0;width:32px;height:32px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;}
+.cap-cell-title{font-size:var(--text-sm);font-weight:600;color:var(--color-text);line-height:1.3;font-family:var(--font-body);}
+.cap-cell-sub{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-faint);margin-top:1px;display:block;}
+.cap-cell-body{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.6;}
+.cap-cell-tags{display:flex;flex-wrap:wrap;gap:var(--space-1);margin-top:var(--space-3);}
+.tag{font-family:var(--font-mono);font-size:10px;color:var(--color-text-faint);background:var(--color-surface-offset);padding:2px 6px;border-radius:var(--radius-sm);border:1px solid var(--color-border);}
+
+/* VALUE FLOW */
+.value-flow{margin:var(--space-8) 0;}
+.vf-node{background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);transition:all var(--transition);}
+.vf-node:hover{background:var(--color-surface-offset);border-color:var(--color-primary);}
+.vf-node--core{background:var(--color-primary-highlight);border-color:var(--color-primary);text-align:center;}
+.vf-node--outcome{background:rgba(66,190,101,.06);border-color:rgba(66,190,101,.2);}
+.vf-node-label{font-size:var(--text-xs);font-weight:600;color:var(--color-text);display:block;margin-bottom:var(--space-1);font-family:var(--font-body);}
+.vf-node--core .vf-node-label{color:var(--color-primary);font-size:var(--text-sm);}
+.vf-node--outcome .vf-node-label{color:var(--color-green);}
+.vf-node-desc{font-size:var(--text-xs);color:var(--color-text-faint);line-height:1.5;}
+.vf-row-3{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:0;margin-bottom:var(--space-3);align-items:center;}
+.vf-arrow{display:flex;align-items:center;justify-content:center;color:var(--color-primary);opacity:.4;padding:0 var(--space-2);}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;margin-bottom:var(--space-8);border:1px solid var(--color-divider);border-radius:var(--radius-lg);}
+table{width:100%;border-collapse:collapse;font-size:var(--text-sm);}
+thead th{font-family:var(--font-mono);font-size:var(--text-xs);font-weight:500;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.08em;padding:var(--space-3) var(--space-4);text-align:left;background:var(--color-surface-2);border-bottom:1px solid var(--color-divider);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--color-divider);transition:background var(--transition);}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--color-surface-offset);}
+tbody td{padding:var(--space-3) var(--space-4);vertical-align:top;line-height:1.5;}
+.td-strong{font-weight:600;}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--radius-full);font-family:var(--font-mono);font-size:10px;font-weight:500;white-space:nowrap;}
+.badge--green{background:rgba(66,190,101,.12);color:var(--color-green);}
+.badge--yellow{background:rgba(241,194,27,.12);color:var(--color-yellow);}
+.badge--red{background:rgba(250,77,86,.12);color:var(--color-red);}
+.badge--blue{background:var(--color-primary-highlight);color:var(--color-primary);}
+.badge--purple{background:rgba(165,110,255,.12);color:var(--color-purple);}
+
+/* SIGNAL LIST */
+.signal-list{display:flex;flex-direction:column;gap:var(--space-3);margin-bottom:var(--space-8);}
+.signal-item{display:grid;grid-template-columns:auto 1fr auto;gap:var(--space-4);align-items:center;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:var(--space-4);transition:background var(--transition);}
+.signal-item:hover{background:var(--color-surface-offset);}
+.signal-icon{width:36px;height:36px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.signal-title{font-size:var(--text-sm);font-weight:600;color:var(--color-text);margin-bottom:2px;}
+.signal-body{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.5;}
+
+/* ROLES GRID */
+.roles-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(260px,100%),1fr));gap:var(--space-4);margin-bottom:var(--space-8);}
+.role-card{background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-xl);padding:var(--space-5);transition:all var(--transition);}
+.role-card:hover{border-color:var(--color-primary);box-shadow:var(--shadow-md),0 0 0 1px var(--color-primary-highlight);}
+.role-card-top{display:flex;align-items:flex-start;gap:var(--space-3);margin-bottom:var(--space-4);}
+.role-icon-wrap{width:40px;height:40px;border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.role-card-title{font-size:var(--text-sm);font-weight:700;color:var(--color-text);font-family:var(--font-body);}
+.role-card-sub{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:2px;}
+.role-impact-bar{height:4px;background:var(--color-surface-offset);border-radius:var(--radius-full);overflow:hidden;margin-bottom:var(--space-3);}
+.role-impact-fill{height:100%;border-radius:var(--radius-full);transition:width 1s cubic-bezier(0.16,1,0.3,1);}
+.role-impact-label{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-faint);margin-bottom:var(--space-3);}
+.skills-list{list-style:none;display:flex;flex-direction:column;gap:var(--space-2);}
+.skills-list li{display:flex;align-items:flex-start;gap:var(--space-2);font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.5;}
+.skills-list .dot{width:5px;height:5px;border-radius:var(--radius-full);flex-shrink:0;margin-top:5px;}
+
+/* ACCORDION */
+.accordion{border:1px solid var(--color-divider);border-radius:var(--radius-xl);overflow:hidden;margin-bottom:var(--space-8);}
+.accordion-item{border-bottom:1px solid var(--color-divider);}
+.accordion-item:last-child{border-bottom:none;}
+.accordion-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:var(--space-4);padding:var(--space-4) var(--space-5);background:var(--color-surface);text-align:left;transition:background var(--transition);}
+.accordion-trigger:hover,.accordion-trigger[aria-expanded="true"]{background:var(--color-surface-offset);}
+.accordion-trigger-content{display:flex;align-items:center;gap:var(--space-3);}
+.accordion-trigger-icon{flex-shrink:0;width:28px;height:28px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;}
+.accordion-trigger-title{font-size:var(--text-sm);font-weight:600;color:var(--color-text);}
+.accordion-trigger-sub{font-size:var(--text-xs);color:var(--color-text-muted);margin-top:1px;}
+.accordion-chevron{flex-shrink:0;color:var(--color-text-faint);transition:transform 250ms cubic-bezier(0.16,1,0.3,1);}
+.accordion-trigger[aria-expanded="true"] .accordion-chevron{transform:rotate(180deg);}
+.accordion-panel{display:none;padding:0 var(--space-5) var(--space-5);background:var(--color-surface);}
+.accordion-panel.open{display:block;}
+.accordion-panel-inner{border-top:1px solid var(--color-divider);padding-top:var(--space-4);font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.7;}
+.accordion-panel-inner strong{color:var(--color-text);font-weight:600;}
+
+/* OUTLOOK */
+.outlook-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4);margin-bottom:var(--space-8);}
+.outlook-card{border:1px solid var(--color-divider);border-radius:var(--radius-xl);padding:var(--space-5);}
+.outlook-card--bull{background:rgba(66,190,101,.03);border-color:rgba(66,190,101,.2);}
+.outlook-card--base{background:rgba(69,137,255,.03);border-color:rgba(69,137,255,.2);}
+.outlook-card--bear{background:rgba(250,77,86,.03);border-color:rgba(250,77,86,.2);}
+.outlook-label{font-family:var(--font-mono);font-size:var(--text-xs);font-weight:600;text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--space-2);}
+.outlook-card--bull .outlook-label{color:var(--color-green);}.outlook-card--base .outlook-label{color:var(--color-primary);}.outlook-card--bear .outlook-label{color:var(--color-red);}
+.outlook-prob{font-family:var(--font-mono);font-size:var(--text-xl);font-weight:500;margin-bottom:var(--space-3);line-height:1;}
+.outlook-card--bull .outlook-prob{color:var(--color-green);}.outlook-card--base .outlook-prob{color:var(--color-primary);}.outlook-card--bear .outlook-prob{color:var(--color-red);}
+.outlook-body{font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.65;}
+.outlook-drivers{margin-top:var(--space-3);list-style:none;display:flex;flex-direction:column;gap:var(--space-1);}
+.outlook-drivers li{font-size:var(--text-xs);color:var(--color-text-faint);display:flex;gap:var(--space-2);}
+.outlook-drivers li::before{content:'→';flex-shrink:0;}
+
+/* ACTION LIST */
+.action-list{list-style:none;display:flex;flex-direction:column;gap:var(--space-3);margin-bottom:var(--space-8);}
+.action-item{display:grid;grid-template-columns:auto 1fr;gap:var(--space-4);align-items:start;background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:var(--space-4) var(--space-5);transition:all var(--transition);}
+.action-item:hover{border-color:var(--color-primary);background:var(--color-surface-offset);}
+.action-num{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-primary);background:var(--color-primary-highlight);width:28px;height:28px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:600;}
+.action-content-title{font-size:var(--text-sm);font-weight:600;color:var(--color-text);margin-bottom:var(--space-1);}
+.action-content-body{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.6;}
+
+/* SKILLS TAXONOMY */
+.skills-taxonomy{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:var(--space-3);margin-bottom:var(--space-8);}
+.skill-group{background:var(--color-surface);border:1px solid var(--color-divider);border-radius:var(--radius-lg);padding:var(--space-4);}
+.skill-group-label{font-family:var(--font-mono);font-size:var(--text-xs);font-weight:600;color:var(--color-text-faint);text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--space-3);}
+.skill-chip-list{display:flex;flex-wrap:wrap;gap:var(--space-1);}
+.skill-chip{font-size:var(--text-xs);padding:var(--space-1) var(--space-2);border-radius:var(--radius-sm);border:1px solid var(--color-border);color:var(--color-text-muted);background:var(--color-surface-offset);transition:all var(--transition);}
+.skill-chip:hover{color:var(--color-text);border-color:var(--color-primary);background:var(--color-primary-highlight);}
+.skill-chip.critical{color:var(--color-primary);border-color:var(--color-primary);background:var(--color-primary-highlight);}
+
+/* FOOTER */
+.footer{background:var(--color-surface);border-top:1px solid var(--color-divider);padding:var(--space-12) 0 var(--space-8);}
+.footer-inner{max-width:var(--content-wide);margin-inline:auto;padding-inline:var(--space-6);display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:var(--space-8);}
+.footer-brand{font-family:var(--font-mono);font-size:var(--text-xs);color:var(--color-text-faint);}
+.footer-note{font-size:var(--text-xs);color:var(--color-text-faint);max-width:360px;line-height:1.6;}
+
+/* UTIL */
+.h-sub{font-size:var(--text-sm);font-weight:700;color:var(--color-text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:var(--space-4);font-family:var(--font-body);}
+.mt-6{margin-top:var(--space-6);}.mt-8{margin-top:var(--space-8);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .main-layout{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .article{padding:var(--space-8) var(--space-4) var(--space-16);}
+  .capability-grid{grid-template-columns:1fr 1fr;}
+  .outlook-grid{grid-template-columns:1fr;}
+  .nav-links{display:none;}
+  .vf-row-3{grid-template-columns:1fr;}
+  .vf-arrow{transform:rotate(90deg);}
+  .kpi-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
+}
+@media(max-width:600px){
+  .capability-grid{grid-template-columns:1fr;}
+  .hero-title{font-size:clamp(1.8rem,8vw,3rem);}
+  .kpi-grid{grid-template-columns:1fr 1fr;}
+  .roles-grid{grid-template-columns:1fr;}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important;}
+}
+</style>
+</head>
+<body>
+<div class="reading-progress" id="progressBar" role="progressbar" aria-label="Reading progress"></div>
+
+<nav class="nav" aria-label="Report navigation">
+  <div class="nav-inner">
+    <a href="#top" class="nav-logo">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-label="IBM DPE Report logo">
+        <rect width="32" height="32" rx="4" fill="var(--color-primary)" opacity="0.15"/>
+        <rect x="6" y="7" width="20" height="3" rx="1.5" fill="var(--color-primary)"/>
+        <rect x="6" y="12" width="14" height="2" rx="1" fill="var(--color-primary)"/>
+        <rect x="6" y="16" width="20" height="2" rx="1" fill="var(--color-primary)"/>
+        <rect x="6" y="20" width="14" height="2" rx="1" fill="var(--color-primary)"/>
+        <rect x="6" y="24" width="20" height="2" rx="1" fill="var(--color-primary)"/>
+      </svg>
+      <span class="nav-logo-text">IBM DPE / Intelligence Report</span>
+    </a>
+    <ul class="nav-links" role="list">
+      <li><a href="#offering">Offering</a></li>
+      <li><a href="#value-stack">Value Stack</a></li>
+      <li><a href="#market">Market Position</a></li>
+      <li><a href="#fit">Best Fit</a></li>
+      <li><a href="#contrarian">Contrarian POV</a></li>
+      <li><a href="#americas">Americas</a></li>
+      <li><a href="#roles">Roles &amp; Skills</a></li>
+      <li><a href="#outlook">Outlook</a></li>
+      <li><a href="#actions">Actions</a></li>
+    </ul>
+    <div class="nav-actions">
+      <span class="report-date">May 2026</span>
+      <button class="btn-icon" data-theme-toggle aria-label="Switch to light mode">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="hero-grid-bg" aria-hidden="true"></div>
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow"><i data-lucide="file-search" style="width:12px;height:12px;"></i> Intelligence Report &middot; IBM Consulting</div>
+    <h1 class="hero-title">IBM Digital<br><em>Product Engineering</em></h1>
+    <p class="hero-subtitle">An executive-grade analysis of the offering, market positioning, competitive landscape, affected roles, skills, and 6&ndash;12 month Americas outlook.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item"><span class="dot"></span>Perplexity Research</div>
+      <div class="hero-meta-item"><span class="dot"></span>May 18, 2026</div>
+      <div class="hero-meta-item"><span class="dot"></span>Primary + Secondary + Contrarian Sources</div>
+      <div class="hero-meta-item"><span class="dot"></span>Product Delivery Team Lens Included</div>
+    </div>
+  </div>
+</header>
+
+<section class="exec-bar" aria-labelledby="exec-label">
+  <div class="exec-bar-inner">
+    <p class="exec-bar-label" id="exec-label">Executive Summary</p>
+    <p class="exec-summary-text">IBM&rsquo;s Digital Product Engineering practice is a <strong>full-spectrum enterprise product delivery system</strong>&mdash;define, build, and transform operating models. Its moat sits in regulated-industry trust, Red Hat/OpenShift (44% container market share), and IBM Consulting Advantage, which demonstrably lifts consultant productivity by up to 50%. The practice operates in a $1.39T global market. <strong>The core tension:</strong> consulting revenue grew only 4% in Q1 2026 while AI automation threatens the legacy modernization work feeding its pipeline. The next 12 months test whether IBM&rsquo;s agentic tooling leads the category or trails it.</p>
+  </div>
+</section>
+
+<section class="kpi-strip" aria-label="Key metrics">
+  <div style="max-width:var(--content-wide);margin-inline:auto;padding-inline:var(--space-6);">
+    <div class="kpi-grid">
+      <div class="kpi-card"><span class="kpi-value">$1.39T</span><span class="kpi-label">Global Market Size (2025)</span><span class="kpi-note">Product Engineering Services</span></div>
+      <div class="kpi-card"><span class="kpi-value up">7.0%</span><span class="kpi-label">N. America CAGR</span><span class="kpi-note">Through 2035 &middot; $13.4B regional base</span></div>
+      <div class="kpi-card"><span class="kpi-value warn">4%</span><span class="kpi-label">IBM Consulting Growth Q1 &lsquo;26</span><span class="kpi-note">Slowest pace in recent history</span></div>
+      <div class="kpi-card"><span class="kpi-value">$12.5B</span><span class="kpi-label">watsonx AI Backlog</span><span class="kpi-note">Total committed GenAI business</span></div>
+      <div class="kpi-card"><span class="kpi-value up">50%</span><span class="kpi-label">Consultant Productivity Gain</span><span class="kpi-note">IBM Consulting Advantage pilots</span></div>
+      <div class="kpi-card"><span class="kpi-value">7</span><span class="kpi-label">Gartner MQ Leader Positions</span><span class="kpi-note">AI-related reports, 2025&ndash;2026</span></div>
+      <div class="kpi-card"><span class="kpi-value down">70%+</span><span class="kpi-label">Digital Transformation Fail Rate</span><span class="kpi-note">Industry-wide &middot; $2.4M avg per failure</span></div>
+      <div class="kpi-card"><span class="kpi-value">100%+</span><span class="kpi-label">IBM Garage Avg ROI</span><span class="kpi-note">Commissioned Forrester Study</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="main-layout">
+  <aside class="sidebar" aria-label="Table of contents">
+    <div class="sidebar-section">
+      <p class="sidebar-label">Contents</p>
+      <nav>
+        <a href="#offering" class="toc-link">1. What the Offering Is</a>
+        <div class="toc-sub"><a href="#three-pillars" class="toc-link">Three Core Pillars</a></div>
+        <a href="#value-stack" class="toc-link">2. How Value Is Delivered</a>
+        <div class="toc-sub">
+          <a href="#garage" class="toc-link">IBM Garage</a>
+          <a href="#consulting-advantage" class="toc-link">Consulting Advantage</a>
+          <a href="#watsonx" class="toc-link">Watsonx &amp; IBM Bob</a>
+          <a href="#ibmix" class="toc-link">IBM iX Design</a>
+        </div>
+        <a href="#market" class="toc-link">3. Market Position</a>
+        <div class="toc-sub">
+          <a href="#gartner" class="toc-link">Gartner Recognition</a>
+          <a href="#competitive" class="toc-link">Competitive Landscape</a>
+        </div>
+        <a href="#fit" class="toc-link">4. Best-Fit Clients</a>
+        <a href="#contrarian" class="toc-link">5. Contrarian Views</a>
+        <a href="#americas" class="toc-link">6. Americas Trends</a>
+        <a href="#roles" class="toc-link">7. Roles, Skills &amp; Relevance</a>
+        <div class="toc-sub">
+          <a href="#critical-roles" class="toc-link">Critical Roles</a>
+          <a href="#skills-future" class="toc-link">Future-Relevant Skills</a>
+        </div>
+        <a href="#outlook" class="toc-link">8. 6&ndash;12 Month Outlook</a>
+        <a href="#actions" class="toc-link">9. Action Items</a>
+      </nav>
+    </div>
+  </aside>
+
+  <main class="article" id="main-content">
+
+    <!-- S1: OFFERING -->
+    <section class="section-block fade-in" id="offering">
+      <div class="section-eyebrow"><span class="num">1</span>Core Offering</div>
+      <h2 class="section-title">What <em>IBM DPE</em> Actually Does</h2>
+      <p class="section-lead">Not a staffing layer. Not a project shop. A three-motion enterprise product system: define the right thing, build it correctly, transform how the organization builds permanently.</p>
+      <p class="body-text">IBM Digital Product Engineering markets itself as a way to &ldquo;transform ideas into digital applications and platforms&rdquo; that unlock new revenue lines, drive customer loyalty, and improve developer productivity. The framing is product-led, not project-led&mdash;the difference between continuous value delivery and one-time deployments. The practice combines product design, product management, and software engineering wrapped in GenAI-accelerated delivery workflows.</p>
+      <p class="body-text">Three primary use cases structure the offering: choosing and governing the right products with AI-first strategy; enhancing developer productivity through automation; and reducing time-to-revenue through co-creation and iterative delivery.</p>
+      <div id="three-pillars" class="mt-8">
+        <h3 class="h-sub">Three Core Pillars</h3>
+        <div class="capability-grid">
+          <div class="cap-cell">
+            <div class="cap-cell-header">
+              <div class="cap-icon" style="background:rgba(69,137,255,.12);"><i data-lucide="compass" style="width:16px;height:16px;color:var(--color-primary);"></i></div>
+              <div><div class="cap-cell-title">Product &amp; Platform Definition, Governance &amp; Strategy</div><span class="cap-cell-sub">Pillar 01</span></div>
+            </div>
+            <p class="cap-cell-body">Deep technology and business insight to identify, define, and govern product strategy. Determines what not to build using design thinking and market analysis before a line of code is written.</p>
+            <div class="cap-cell-tags"><span class="tag">Design Thinking</span><span class="tag">Roadmapping</span><span class="tag">Portfolio Mgmt</span></div>
+          </div>
+          <div class="cap-cell">
+            <div class="cap-cell-header">
+              <div class="cap-icon" style="background:rgba(8,189,186,.12);"><i data-lucide="code-2" style="width:16px;height:16px;color:var(--color-teal);"></i></div>
+              <div><div class="cap-cell-title">Product Delivery &amp; Enhancement</div><span class="cap-cell-sub">Pillar 02</span></div>
+            </div>
+            <p class="cap-cell-body">Architecture and development of greenfield digital ecosystems. Cloud-native, DevSecOps pipelines, hybrid cloud via Red Hat OpenShift. The core &ldquo;build&rdquo; muscle.</p>
+            <div class="cap-cell-tags"><span class="tag">Cloud-Native Dev</span><span class="tag">DevSecOps</span><span class="tag">OpenShift</span></div>
+          </div>
+          <div class="cap-cell">
+            <div class="cap-cell-header">
+              <div class="cap-icon" style="background:rgba(165,110,255,.12);"><i data-lucide="refresh-cw" style="width:16px;height:16px;color:var(--color-purple);"></i></div>
+              <div><div class="cap-cell-title">Product-Led Transformation &amp; Captives</div><span class="cap-cell-sub">Pillar 03</span></div>
+            </div>
+            <p class="cap-cell-body">Operating model design, org redesign, and AI-first platforms to maximize value delivery while reducing cost. Builds internal product organizations and changes how clients make products permanently.</p>
+            <div class="cap-cell-tags"><span class="tag">Operating Model</span><span class="tag">Org Design</span><span class="tag">AI Workflows</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="callout callout--green">
+        <div class="callout-label">Key Insight</div>
+        <p class="callout-text"><strong>The third pillar (Product-Led Transformation) is IBM&rsquo;s sharpest differentiator.</strong> Most competitors can ship software. Few will redesign a client&rsquo;s entire product-making operating model and create a permanently elevated internal capability. That&rsquo;s where IBM earns long-term stickiness in regulated enterprises.</p>
+      </div>
+    </section>
+
+    <!-- S2: VALUE STACK -->
+    <section class="section-block fade-in" id="value-stack">
+      <div class="section-eyebrow"><span class="num">2</span>Enablement Stack</div>
+      <h2 class="section-title">How Value Is <em>Actually Delivered</em></h2>
+      <p class="section-lead">IBM DPE&rsquo;s value depends on an integrated stack of methodology, platforms, and alliances&mdash;not any single tool. The topology flows from the core offering through six capability clusters to specific business outcomes.</p>
+      <div class="value-flow">
+        <div style="text-align:center;margin-bottom:var(--space-4);">
+          <div class="vf-node vf-node--core" style="display:inline-block;min-width:240px;">
+            <span class="vf-node-label">IBM Digital Product Engineering</span>
+            <span class="vf-node-desc" style="color:var(--color-primary);opacity:.7;">Core Offering &middot; IBM Consulting</span>
+          </div>
+        </div>
+        <div style="text-align:center;color:var(--color-text-faint);margin:var(--space-2) 0;font-size:20px;">&#8595;</div>
+        <div class="vf-row-3" style="margin-bottom:var(--space-3);">
+          <div class="vf-node"><span class="vf-node-label">Product &amp; Platform Strategy</span><span class="vf-node-desc">IBM Garage &rarr; Revenue Growth</span></div>
+          <div class="vf-arrow"><i data-lucide="arrow-right" style="width:16px;height:16px;"></i></div>
+          <div class="vf-node"><span class="vf-node-label">Product Delivery &amp; Engineering</span><span class="vf-node-desc">IBM Bob (Agentic Dev) &rarr; Speed to Market</span></div>
+          <div class="vf-arrow"><i data-lucide="arrow-right" style="width:16px;height:16px;"></i></div>
+          <div class="vf-node"><span class="vf-node-label">Product-Led Transformation</span><span class="vf-node-desc">IBM Enterprise Advantage &rarr; Cost Reduction</span></div>
+        </div>
+        <div class="vf-row-3">
+          <div class="vf-node"><span class="vf-node-label">Experience Design (IBM iX)</span><span class="vf-node-desc">Consulting Advantage &rarr; Customer Experience</span></div>
+          <div class="vf-arrow"><i data-lucide="arrow-right" style="width:16px;height:16px;"></i></div>
+          <div class="vf-node"><span class="vf-node-label">Hybrid Cloud Architecture</span><span class="vf-node-desc">Red Hat / OpenShift + Cloud Partners</span></div>
+          <div class="vf-arrow"><i data-lucide="arrow-right" style="width:16px;height:16px;"></i></div>
+          <div class="vf-node"><span class="vf-node-label">AI &amp; GenAI Integration</span><span class="vf-node-desc">Watsonx &rarr; Enterprise AI Readiness</span></div>
+        </div>
+        <div style="text-align:center;color:var(--color-text-faint);margin:var(--space-2) 0;font-size:20px;">&#8595;</div>
+        <div class="vf-row-3">
+          <div class="vf-node vf-node--outcome"><span class="vf-node-label">Revenue Growth</span><span class="vf-node-desc">New product lines, digital channels</span></div>
+          <div class="vf-arrow"><i data-lucide="plus" style="width:14px;height:14px;opacity:.3;"></i></div>
+          <div class="vf-node vf-node--outcome"><span class="vf-node-label">Developer Productivity</span><span class="vf-node-desc">Up to 50% improvement (Consulting Advantage)</span></div>
+          <div class="vf-arrow"><i data-lucide="plus" style="width:14px;height:14px;opacity:.3;"></i></div>
+          <div class="vf-node vf-node--outcome"><span class="vf-node-label">Enterprise AI Readiness</span><span class="vf-node-desc">Governed, scalable AI at production</span></div>
+        </div>
+      </div>
+
+      <div id="garage" class="mt-8">
+        <h3 class="h-sub">IBM Garage Methodology</h3>
+        <p class="body-text">The co-creation engine underneath all DPE engagements. Built on enterprise design thinking, lean startup, agile, and DevOps&mdash;operating in three phases: Co-Create (ideation + user research), Co-Execute (MVP + iteration), and Co-Operate (hardening + enterprise scaling). A commissioned Forrester study found the methodology <strong>doubles production release rates</strong>, cuts two-thirds of delivery time, and generates average ROI exceeding 100%. Engagements grew from 300 in early 2020 to over 1,500 within a single year.</p>
+        <div class="signal-list">
+          <div class="signal-item">
+            <div class="signal-icon" style="background:rgba(66,190,101,.12);"><i data-lucide="trending-up" style="width:16px;height:16px;color:var(--color-green);"></i></div>
+            <div><div class="signal-title">Audi UK &mdash; 59% increase in online sales inquiries</div><div class="signal-body">IBM Garage-built digital product dramatically lifted online intent and dealer pipeline.</div></div>
+            <span class="badge badge--green">Validated</span>
+          </div>
+          <div class="signal-item">
+            <div class="signal-icon" style="background:rgba(66,190,101,.12);"><i data-lucide="users" style="width:16px;height:16px;color:var(--color-green);"></i></div>
+            <div><div class="signal-title">Frito-Lay &mdash; 30,000 active customers, Garage-built e-commerce</div><div class="signal-body">New direct channel launched through rapid Co-Create &rarr; Co-Execute cycle.</div></div>
+            <span class="badge badge--green">Validated</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="consulting-advantage" class="mt-6">
+        <h3 class="h-sub">IBM Consulting Advantage &amp; Enterprise Advantage</h3>
+        <p class="body-text">Launched January 2024, IBM Consulting Advantage equips ~150,000 consultants with role-based AI assistants built on watsonx: strategy, BA, and developer code generation tools. Early pilots in application design and testing saw <strong>up to 50% productivity improvement</strong>. In January 2026, IBM launched <strong>IBM Enterprise Advantage</strong>&mdash;a client-facing version pairing human consultants with agentic AI workers. Early adopters include Pearson (AI-powered HR platform) and an unnamed manufacturer scaling AI assistants in a governed environment.</p>
+      </div>
+
+      <div id="watsonx" class="mt-6">
+        <h3 class="h-sub">Watsonx, IBM Bob &amp; the AI Stack</h3>
+        <p class="body-text">IBM&rsquo;s watsonx portfolio (watsonx.ai, watsonx.data, watsonx.governance, watsonx Orchestrate) is the AI backbone. IBM announced $12.5B in total generative AI business backed by watsonx. At Think 2026 (May 2026), IBM unveiled <strong>IBM Bob</strong>&mdash;a generally available agentic developer tool with built-in security and cost controls. IBM Bob Premium extends capabilities to mainframe (z) environments, a critical differentiator for regulated industries running COBOL codebases that Accenture and Deloitte cannot replicate at this depth.</p>
+        <div class="callout callout--warn">
+          <div class="callout-label">Risk Signal</div>
+          <p class="callout-text"><strong>Anthropic released a COBOL modernization tool in February 2026</strong> that directly targets IBM&rsquo;s most defensible client segment. IBM Bob Premium counters this at the mainframe layer, but the threat to legacy modernization revenue is credible and should be tracked over the next two quarters.</p>
+        </div>
+      </div>
+
+      <div id="ibmix" class="mt-6">
+        <h3 class="h-sub">IBM iX &mdash; Experience Design Layer</h3>
+        <p class="body-text">IBM&rsquo;s experience design practice, working at the intersection of strategy, design, and technology. Within DPE, iX functions as the UX/design layer: user research, product personas, design systems (including the open-source Carbon design system). IBM iX has partnered with Adobe for Design Systems as a Service offerings. It is the entry-point discipline most underweighted by DPE clients and most difficult for competitors to replicate without the upstream engineering integration.</p>
+      </div>
+    </section>
+
+    <!-- S3: MARKET POSITION -->
+    <section class="section-block fade-in" id="market">
+      <div class="section-eyebrow"><span class="num">3</span>Market Position</div>
+      <h2 class="section-title">Where IBM Stands in the <em>Competitive Landscape</em></h2>
+      <p class="section-lead">IBM is a Gartner Leader. IBM is not the market share leader. These two facts coexist&mdash;and understanding the distance between them is central to any honest assessment of this practice.</p>
+      <div id="gartner">
+        <p class="body-text">IBM holds a <strong>Leader position in the 2024 Gartner Magic Quadrant for Custom Software Development Services</strong>. Deloitte ranked highest on Ability to Execute in the same report. IBM&rsquo;s positioning is strongest on Completeness of Vision in AI-integrated delivery and hybrid cloud architecture&mdash;where watsonx and Red Hat provide structural differentiation over pure-play services firms.</p>
+        <p class="body-text">In brand value, Accenture leads global IT services at $42.3B in 2026; IBM Consulting ranks fourth at approximately $12.1B. Accenture&rsquo;s revenue grew from $50.5B in 2021 to $69.7B in 2025&mdash;37.9% growth&mdash;outpacing IBM. IBM Consulting is not the market share leader; it is a <strong>premium player competing on regulated-industry trust, enterprise integration depth, and AI stack differentiation.</strong></p>
+      </div>
+      <div id="competitive" class="mt-8">
+        <h3 class="h-sub">Competitive Positioning Matrix</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Provider</th><th>Primary Strength</th><th>DPE Differentiator</th><th>Notable Weakness</th><th>Threat to IBM</th></tr></thead>
+            <tbody>
+              <tr><td class="td-strong">IBM Consulting</td><td>Regulated enterprise, AI+cloud stack</td><td>Garage + watsonx + Red Hat</td><td>Slower growth, complexity perception</td><td><span class="badge badge--blue">Self-assessed</span></td></tr>
+              <tr><td class="td-strong">Accenture</td><td>Broadest revenue scale, AI pivots</td><td>Outcome-based contracts</td><td>Premium pricing, commoditization risk</td><td><span class="badge badge--red">High</span></td></tr>
+              <tr><td class="td-strong">Deloitte</td><td>Highest Ability to Execute (Gartner)</td><td>Fortune 100 delivery track record</td><td>Less AI platform differentiation</td><td><span class="badge badge--red">High</span></td></tr>
+              <tr><td class="td-strong">HCLTech</td><td>Cost-competitive scale</td><td>AI + agile delivery</td><td>Lower North America brand trust</td><td><span class="badge badge--yellow">Medium</span></td></tr>
+              <tr><td class="td-strong">Capgemini</td><td>European enterprise, hybrid cloud</td><td>Applied Innovation Exchange</td><td>Weaker Americas presence</td><td><span class="badge badge--yellow">Medium</span></td></tr>
+              <tr><td class="td-strong">TCS / Infosys</td><td>Price and offshore talent</td><td>Delivery efficiency</td><td>Lower product design capability</td><td><span class="badge badge--yellow">Indirect</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pull-quote">
+          <p class="pull-quote-text">&ldquo;Accenture is executing an aggressive pivot toward AI-driven, outcome-based service contracts. Deloitte is attracting top talent from both firms. IBM must defend share against competitors who rank higher on execution and have equity stakes in Anthropic and Databricks.&rdquo;</p>
+          <p class="pull-quote-attr">Analysis synthesis &middot; multiple sources &middot; May 2026</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- S4: BEST FIT -->
+    <section class="section-block fade-in" id="fit">
+      <div class="section-eyebrow"><span class="num">4</span>Best-Fit Clients</div>
+      <h2 class="section-title">Who This Is &mdash; and Isn&rsquo;t &mdash; <em>Built For</em></h2>
+      <p class="section-lead">IBM DPE&rsquo;s commercial model, delivery depth, and minimum viable engagement scope all skew toward organizations with significant legacy footprint, compliance requirements, and the budget for multi-quarter transformation.</p>
+      <h3 class="h-sub" style="color:var(--color-green);">Highest-Fit Profiles</h3>
+      <div class="signal-list" style="margin-bottom:var(--space-8);">
+        <div class="signal-item">
+          <div class="signal-icon" style="background:rgba(66,190,101,.12);"><i data-lucide="shield-check" style="width:16px;height:16px;color:var(--color-green);"></i></div>
+          <div><div class="signal-title">Large enterprises in regulated industries</div><div class="signal-body">Financial services, healthcare, aerospace, government&mdash;where IBM&rsquo;s trust record, data governance, and Red Hat Sovereign Core address direct business requirements.</div></div>
+          <span class="badge badge--green">Strong Fit</span>
+        </div>
+        <div class="signal-item">
+          <div class="signal-icon" style="background:rgba(66,190,101,.12);"><i data-lucide="server" style="width:16px;height:16px;color:var(--color-green);"></i></div>
+          <div><div class="signal-title">Organizations with legacy modernization debt</div><div class="signal-body">COBOL mainframes or fragmented ERP estates. IBM Bob Premium&rsquo;s mainframe extension makes agentic development native to z environments&mdash;no competitor replicates this.</div></div>
+          <span class="badge badge--green">Strong Fit</span>
+        </div>
+        <div class="signal-item">
+          <div class="signal-icon" style="background:rgba(66,190,101,.12);"><i data-lucide="layers" style="width:16px;height:16px;color:var(--color-green);"></i></div>
+          <div><div class="signal-title">Enterprises pursuing product-led transformation</div><div class="signal-body">Organizations ready to redesign their development operating model. IBM&rsquo;s captive model and Garage&rsquo;s three-phase co-creation structure are built for systemic change.</div></div>
+          <span class="badge badge--green">Strong Fit</span>
+        </div>
+        <div class="signal-item">
+          <div class="signal-icon" style="background:rgba(66,190,101,.12);"><i data-lucide="cpu" style="width:16px;height:16px;color:var(--color-green);"></i></div>
+          <div><div class="signal-title">Companies scaling AI into product delivery</div><div class="signal-body">Organizations infusing AI into their product portfolios at scale. IBM&rsquo;s watsonx delivery + Consulting Advantage&rsquo;s 50% productivity data gives CIOs a credible accountability story.</div></div>
+          <span class="badge badge--green">Strong Fit</span>
+        </div>
+      </div>
+      <h3 class="h-sub" style="color:var(--color-red);">Poor-Fit Profiles</h3>
+      <div class="signal-list">
+        <div class="signal-item">
+          <div class="signal-icon" style="background:rgba(250,77,86,.08);"><i data-lucide="x-circle" style="width:16px;height:16px;color:var(--color-red);"></i></div>
+          <div><div class="signal-title">Pure-play SaaS companies &amp; pre-Series B startups</div><div class="signal-body">IBM&rsquo;s engagement scope, commercial model, and operating model focus all mismatch with startups needing fast, lean digital builds without enterprise transformation overhead.</div></div>
+          <span class="badge badge--red">Poor Fit</span>
+        </div>
+        <div class="signal-item">
+          <div class="signal-icon" style="background:rgba(250,77,86,.08);"><i data-lucide="x-circle" style="width:16px;height:16px;color:var(--color-red);"></i></div>
+          <div><div class="signal-title">Single-cloud committed organizations (AWS-native)</div><div class="signal-body">IBM&rsquo;s ecosystem benefits accrue to multicloud, regulated, hybrid architectures. Single-hyperscaler shops will find IBM&rsquo;s platform story less differentiated.</div></div>
+          <span class="badge badge--red">Poor Fit</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- S5: CONTRARIAN -->
+    <section class="section-block fade-in" id="contrarian">
+      <div class="section-eyebrow"><span class="num">5</span>Contrarian &amp; Critical POV</div>
+      <h2 class="section-title">What the Market <em>Qualifies</em></h2>
+      <p class="section-lead">Five dimensions where the dominant narrative overweights IBM&rsquo;s position. These are structurally grounded risks that should shape how this practice is engaged and evaluated.</p>
+      <div class="accordion">
+        <div class="accordion-item">
+          <button class="accordion-trigger" aria-expanded="false" aria-controls="c1">
+            <div class="accordion-trigger-content"><div class="accordion-trigger-icon" style="background:rgba(250,77,86,.12);"><i data-lucide="trending-down" style="width:14px;height:14px;color:var(--color-red);"></i></div><div><div class="accordion-trigger-title">Consulting revenue is under structural AI-driven pressure</div><div class="accordion-trigger-sub">Q1 2026: 4% growth&mdash;slowest in years. Morgan Stanley flagged AI automation as primary risk.</div></div></div>
+            <i data-lucide="chevron-down" class="accordion-chevron" style="width:18px;height:18px;"></i>
+          </button>
+          <div class="accordion-panel" id="c1"><div class="accordion-panel-inner"><strong>IBM Q1 2026 consulting revenue grew only 4% to $5.27B</strong>&mdash;the slowest pace in recent years&mdash;while software grew 11% and infrastructure 15%. Morgan Stanley explicitly flagged consulting as most likely to see disruption from AI automation in legacy modernization work, which is a core DPE motion. IBM&rsquo;s stock sold off 6% after Q1 2026 earnings. The economic signal: IBM&rsquo;s AI platform story is accelerating while its consulting delivery model is under pressure from the same AI it is selling.</div></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger" aria-expanded="false" aria-controls="c2">
+            <div class="accordion-trigger-content"><div class="accordion-trigger-icon" style="background:rgba(241,194,27,.12);"><i data-lucide="zap" style="width:14px;height:14px;color:var(--color-yellow);"></i></div><div><div class="accordion-trigger-title">AI is simultaneously driving and threatening consulting demand</div><div class="accordion-trigger-sub">Forrester: AI could flip from tailwind to headwind by 2027 as advisory work gets automated.</div></div></div>
+            <i data-lucide="chevron-down" class="accordion-chevron" style="width:18px;height:18px;"></i>
+          </button>
+          <div class="accordion-panel" id="c2"><div class="accordion-panel-inner">AI lets consulting firms do more work at lower cost, which pressures margins and headcount models. Forrester&rsquo;s analysis notes the economic paradox explicitly. <em>NextWord</em> noted that while AI disruption fears increase short-term consulting demand, AI could flip from tailwind to headwind by 2027 as it automates the advisory work itself. IBM is caught in this dynamic more visibly than peers because its platform narrative leads the conversation&mdash;raising the question of when IBM&rsquo;s own tools cannibalize IBM&rsquo;s own delivery margin.</div></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger" aria-expanded="false" aria-controls="c3">
+            <div class="accordion-trigger-content"><div class="accordion-trigger-icon" style="background:rgba(250,77,86,.12);"><i data-lucide="alert-triangle" style="width:14px;height:14px;color:var(--color-red);"></i></div><div><div class="accordion-trigger-title">Digital transformation failure rates remain stubbornly high</div><div class="accordion-trigger-sub">McKinsey, BCG: fewer than 30% of transformations meet objectives. 73% fail to deliver expected ROI.</div></div></div>
+            <i data-lucide="chevron-down" class="accordion-chevron" style="width:18px;height:18px;"></i>
+          </button>
+          <div class="accordion-panel" id="c3"><div class="accordion-panel-inner">McKinsey and BCG independently report fewer than 30% of digital transformation initiatives meet objectives. MIT found 95% of GenAI trials fail to produce measurable business results. When 73% of digital transformation initiatives fail to deliver expected ROI&mdash;costing an average $2.4M per failure&mdash;<strong>the consulting firm running those engagements bears reputational risk regardless of its Gartner position.</strong> IBM&rsquo;s Garage ROI claims (Forrester commissioned, published by IBM) should be evaluated with this baseline in mind. The claim of 100%+ average ROI deserves scrutiny as to selection criteria and methodology.</div></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger" aria-expanded="false" aria-controls="c4">
+            <div class="accordion-trigger-content"><div class="accordion-trigger-icon" style="background:rgba(241,194,27,.12);"><i data-lucide="git-branch" style="width:14px;height:14px;color:var(--color-yellow);"></i></div><div><div class="accordion-trigger-title">IBM&rsquo;s internal complexity and legacy vendor perception create delivery friction</div><div class="accordion-trigger-sub">SWOT analyses and practitioner communities consistently name this. Portfolio complexity hinders agility.</div></div></div>
+            <i data-lucide="chevron-down" class="accordion-chevron" style="width:18px;height:18px;"></i>
+          </button>
+          <div class="accordion-panel" id="c4"><div class="accordion-panel-inner">SWOT analyses consistently note that IBM&rsquo;s portfolio complexity and internal organizational dynamics create drag on the agility clients expect from a digital product partner. Product-led consulting experts note that firms with entrenched preferred stacks risk &ldquo;installation masquerading as consulting,&rdquo; where the technology decision precedes problem definition. IBM&rsquo;s alliance structure is a strength when leveraged neutrally but a liability if clients perceive IBM routing them toward IBM-advantaged architectures.</div></div>
+        </div>
+        <div class="accordion-item">
+          <button class="accordion-trigger" aria-expanded="false" aria-controls="c5">
+            <div class="accordion-trigger-content"><div class="accordion-trigger-icon" style="background:rgba(241,194,27,.12);"><i data-lucide="users" style="width:14px;height:14px;color:var(--color-yellow);"></i></div><div><div class="accordion-trigger-title">Talent competition with Accenture and Deloitte is a delivery quality constraint</div><div class="accordion-trigger-sub">IBM&rsquo;s ability to attract and retain top product engineering talent in the Americas remains limited.</div></div></div>
+            <i data-lucide="chevron-down" class="accordion-chevron" style="width:18px;height:18px;"></i>
+          </button>
+          <div class="accordion-panel" id="c5"><div class="accordion-panel-inner">Accenture&rsquo;s $42.3B brand value versus IBM Consulting&rsquo;s ~$12.1B is not just a marketing metric&mdash;it reflects talent market perception. Deloitte has been attracting MDs from Accenture aggressively. IBM&rsquo;s ability to attract top-tier product engineering talent in the Americas is a genuine constraint on delivery quality at scale, particularly for consumer technology and platform-native sectors. IBM Consulting Advantage partially compensates for headcount, but does not substitute for senior practitioner judgment in complex enterprise engagements.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- S6: AMERICAS -->
+    <section class="section-block fade-in" id="americas">
+      <div class="section-eyebrow"><span class="num">6</span>Americas Market Context</div>
+      <h2 class="section-title">Structural Forces Shaping <em>Consulting in 2026</em></h2>
+      <p class="section-lead">Five macro forces are converging in the Americas that directly affect how IBM DPE is positioned, contracted, and evaluated. Each represents both an opportunity and a test.</p>
+      <div class="capability-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="cap-cell">
+          <div class="cap-cell-header"><div class="cap-icon" style="background:rgba(66,190,101,.12);"><i data-lucide="bar-chart-2" style="width:16px;height:16px;color:var(--color-green);"></i></div><div><div class="cap-cell-title">Record AI Investment Intent</div><span class="cap-cell-sub">Opportunity signal</span></div></div>
+          <p class="cap-cell-body">86% of C-suite leaders plan to increase AI investment in 2026. 78% now see AI as more beneficial to revenue growth than cost reduction. Only 32% report sustained, enterprise-wide AI results&mdash;the execution gap IBM is positioned to close.</p>
+        </div>
+        <div class="cap-cell">
+          <div class="cap-cell-header"><div class="cap-icon" style="background:rgba(241,194,27,.12);"><i data-lucide="target" style="width:16px;height:16px;color:var(--color-yellow);"></i></div><div><div class="cap-cell-title">ROI Accountability Gap</div><span class="cap-cell-sub">Market pressure signal</span></div></div>
+          <p class="cap-cell-body">90% of firms are experimenting with AI but 60% lack the data foundations to scale it. Bain found 42% of companies missed 2025 growth targets. Companies with well-defined value propositions grew 19% vs. 12% for those without.</p>
+        </div>
+        <div class="cap-cell">
+          <div class="cap-cell-header"><div class="cap-icon" style="background:rgba(165,110,255,.12);"><i data-lucide="file-signature" style="width:16px;height:16px;color:var(--color-purple);"></i></div><div><div class="cap-cell-title">Outcome-Based Pricing Becoming Standard</div><span class="cap-cell-sub">Contract model shift</span></div></div>
+          <p class="cap-cell-body">Forrester projects consulting firms will be required to put fees at risk through outcome-based pricing. Accenture is already executing this pivot. IBM&rsquo;s ability to commercialize this model at scale is a 6&ndash;12 month strategic test.</p>
+        </div>
+        <div class="cap-cell">
+          <div class="cap-cell-header"><div class="cap-icon" style="background:rgba(69,137,255,.12);"><i data-lucide="globe" style="width:16px;height:16px;color:var(--color-primary);"></i></div><div><div class="cap-cell-title">Sovereign AI as Emerging Demand Vector</div><span class="cap-cell-sub">Regulatory differentiation</span></div></div>
+          <p class="cap-cell-body">IBM&rsquo;s Think 2026 announcement of IBM Sovereign Core&mdash;governance policies embedded directly into infrastructure runtime&mdash;positions IBM for public sector and regulated clients facing data residency and AI governance compliance requirements. Underappreciated differentiator for the next 12 months.</p>
+        </div>
+      </div>
+      <div class="callout" style="margin-top:var(--space-6);">
+        <div class="callout-label">Structural Shift</div>
+        <p class="callout-text"><strong>Headcount is no longer the growth metric in consulting.</strong> Bain shows companies now spend more on automation and AI than on new headcount. IBM Consulting Advantage&rsquo;s productivity tooling is IBM&rsquo;s structural response&mdash;but it also compresses the revenue-per-engagement ceiling over time. IBM must solve for this margin equation publicly before competitors define it.</p>
+      </div>
+    </section>
+
+    <!-- S7: ROLES & SKILLS -->
+    <section class="section-block fade-in" id="roles">
+      <div class="section-eyebrow"><span class="num">7</span>Roles, Skills &amp; Future Relevance</div>
+      <h2 class="section-title">Who Gets Affected, Who Stays <em>Relevant</em></h2>
+      <p class="section-lead">IBM DPE&rsquo;s agentic AI stack, delivery automation, and operating model transformation directly reshape the roles on every product delivery team&mdash;inside IBM&rsquo;s engagements and inside the client organizations they transform.</p>
+
+      <div id="critical-roles">
+        <h3 class="h-sub" style="margin-bottom:var(--space-5);">Critical Roles &mdash; Disruption &amp; Opportunity Map</h3>
+        <div class="roles-grid">
+          <div class="role-card">
+            <div class="role-card-top"><div class="role-icon-wrap" style="background:rgba(69,137,255,.12);"><i data-lucide="compass" style="width:18px;height:18px;color:var(--color-primary);"></i></div><div><div class="role-card-title">Product Manager</div><div class="role-card-sub">CRITICAL &mdash; Elevated role</div></div></div>
+            <div class="role-impact-label">Disruption: High &middot; Opportunity: Very High</div>
+            <div class="role-impact-bar"><div class="role-impact-fill" style="width:0%;background:var(--color-primary);" data-target="85%"></div></div>
+            <ul class="skills-list">
+              <li><span class="dot" style="background:var(--color-primary);"></span>AI-native product discovery and ideation with GenAI assistants</li>
+              <li><span class="dot" style="background:var(--color-primary);"></span>Outcome-based prioritization and ROI framing for AI investments</li>
+              <li><span class="dot" style="background:var(--color-primary);"></span>Governance and ethics for AI-embedded product features</li>
+              <li><span class="dot" style="background:var(--color-primary);"></span>Navigating ambiguity and generating actionable clarity at speed</li>
+            </ul>
+          </div>
+          <div class="role-card">
+            <div class="role-card-top"><div class="role-icon-wrap" style="background:rgba(250,77,86,.1);"><i data-lucide="code-2" style="width:18px;height:18px;color:var(--color-red);"></i></div><div><div class="role-card-title">Software Engineer / Developer</div><div class="role-card-sub">HIGH IMPACT &mdash; Role redefined</div></div></div>
+            <div class="role-impact-label">Disruption: Very High &middot; Opportunity: High</div>
+            <div class="role-impact-bar"><div class="role-impact-fill" style="width:0%;background:var(--color-red);" data-target="90%"></div></div>
+            <ul class="skills-list">
+              <li><span class="dot" style="background:var(--color-red);"></span>Prompt engineering and AI-assisted coding (IBM Bob, GitHub Copilot)</li>
+              <li><span class="dot" style="background:var(--color-red);"></span>Agentic workflow design&mdash;building with and for AI agents</li>
+              <li><span class="dot" style="background:var(--color-red);"></span>Cloud-native development + DevSecOps on OpenShift</li>
+              <li><span class="dot" style="background:var(--color-red);"></span>Security-first engineering in regulated environments</li>
+            </ul>
+          </div>
+          <div class="role-card">
+            <div class="role-card-top"><div class="role-icon-wrap" style="background:rgba(8,189,186,.12);"><i data-lucide="pen-tool" style="width:18px;height:18px;color:var(--color-teal);"></i></div><div><div class="role-card-title">UX / Product Designer</div><div class="role-card-sub">ELEVATED &mdash; Strategic leverage point</div></div></div>
+            <div class="role-impact-label">Disruption: Medium &middot; Opportunity: Very High</div>
+            <div class="role-impact-bar"><div class="role-impact-fill" style="width:0%;background:var(--color-teal);" data-target="80%"></div></div>
+            <ul class="skills-list">
+              <li><span class="dot" style="background:var(--color-teal);"></span>Human-AI interaction design patterns and responsible UX</li>
+              <li><span class="dot" style="background:var(--color-teal);"></span>Systems thinking across product, data, and AI touchpoints</li>
+              <li><span class="dot" style="background:var(--color-teal);"></span>Design systems at enterprise scale (IBM Carbon fluency)</li>
+              <li><span class="dot" style="background:var(--color-teal);"></span>Facilitation of enterprise design thinking and co-creation</li>
+            </ul>
+          </div>
+          <div class="role-card">
+            <div class="role-card-top"><div class="role-icon-wrap" style="background:rgba(165,110,255,.12);"><i data-lucide="brain" style="width:18px;height:18px;color:var(--color-purple);"></i></div><div><div class="role-card-title">Solution / Enterprise Architect</div><div class="role-card-sub">CRITICAL &mdash; Integration complexity rises</div></div></div>
+            <div class="role-impact-label">Disruption: Medium-High &middot; Opportunity: Very High</div>
+            <div class="role-impact-bar"><div class="role-impact-fill" style="width:0%;background:var(--color-purple);" data-target="78%"></div></div>
+            <ul class="skills-list">
+              <li><span class="dot" style="background:var(--color-purple);"></span>AI-agent orchestration architecture (watsonx Orchestrate)</li>
+              <li><span class="dot" style="background:var(--color-purple);"></span>Hybrid cloud and data sovereignty design patterns</li>
+              <li><span class="dot" style="background:var(--color-purple);"></span>Integration of legacy systems with modern AI stacks</li>
+              <li><span class="dot" style="background:var(--color-purple);"></span>Cost modeling and performance optimization for AI workloads</li>
+            </ul>
+          </div>
+          <div class="role-card">
+            <div class="role-card-top"><div class="role-icon-wrap" style="background:rgba(241,194,27,.12);"><i data-lucide="clipboard-list" style="width:18px;height:18px;color:var(--color-yellow);"></i></div><div><div class="role-card-title">Delivery Lead / Engagement Manager</div><div class="role-card-sub">AT RISK &mdash; Must evolve to outcome focus</div></div></div>
+            <div class="role-impact-label">Disruption: High &middot; Opportunity: Medium</div>
+            <div class="role-impact-bar"><div class="role-impact-fill" style="width:0%;background:var(--color-yellow);" data-target="70%"></div></div>
+            <ul class="skills-list">
+              <li><span class="dot" style="background:var(--color-yellow);"></span>Outcome-based contract design and value tracking</li>
+              <li><span class="dot" style="background:var(--color-yellow);"></span>AI-augmented project intelligence and risk prediction</li>
+              <li><span class="dot" style="background:var(--color-yellow);"></span>Cross-functional operating model design</li>
+              <li><span class="dot" style="background:var(--color-yellow);"></span>Stakeholder trust building in AI transformation programs</li>
+            </ul>
+          </div>
+          <div class="role-card">
+            <div class="role-card-top"><div class="role-icon-wrap" style="background:rgba(255,131,43,.12);"><i data-lucide="database" style="width:18px;height:18px;color:var(--color-orange);"></i></div><div><div class="role-card-title">Data Engineer / ML Ops</div><div class="role-card-sub">HIGH DEMAND &mdash; AI product infrastructure</div></div></div>
+            <div class="role-impact-label">Disruption: Low &middot; Opportunity: Very High</div>
+            <div class="role-impact-bar"><div class="role-impact-fill" style="width:0%;background:var(--color-orange);" data-target="88%"></div></div>
+            <ul class="skills-list">
+              <li><span class="dot" style="background:var(--color-orange);"></span>watsonx.data governance and pipeline architecture</li>
+              <li><span class="dot" style="background:var(--color-orange);"></span>Model evaluation, monitoring, and drift detection</li>
+              <li><span class="dot" style="background:var(--color-orange);"></span>Retrieval-Augmented Generation (RAG) for enterprise knowledge</li>
+              <li><span class="dot" style="background:var(--color-orange);"></span>Cost-efficient LLM fine-tuning and deployment at scale</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="skills-future" class="mt-8">
+        <h3 class="h-sub" style="margin-bottom:var(--space-5);">Skills That Ensure Future Relevance</h3>
+        <div class="skills-taxonomy">
+          <div class="skill-group"><div class="skill-group-label">AI Fluency</div><div class="skill-chip-list"><span class="skill-chip critical">Prompt Engineering</span><span class="skill-chip critical">Agentic Workflow Design</span><span class="skill-chip critical">AI Product Ethics</span><span class="skill-chip">RAG Architecture</span><span class="skill-chip">Model Evaluation</span><span class="skill-chip">LLM Fine-tuning</span></div></div>
+          <div class="skill-group"><div class="skill-group-label">Product Craft</div><div class="skill-chip-list"><span class="skill-chip critical">Outcome-Based Prioritization</span><span class="skill-chip critical">Jobs-to-Be-Done</span><span class="skill-chip critical">AI-Native Discovery</span><span class="skill-chip">Enterprise Design Thinking</span><span class="skill-chip">Continuous Discovery</span><span class="skill-chip">Product Metrics Design</span></div></div>
+          <div class="skill-group"><div class="skill-group-label">Engineering Depth</div><div class="skill-chip-list"><span class="skill-chip critical">Cloud-Native Dev</span><span class="skill-chip critical">DevSecOps</span><span class="skill-chip">OpenShift / Kubernetes</span><span class="skill-chip">Event-Driven Arch</span><span class="skill-chip">API-First Design</span><span class="skill-chip">Security Engineering</span></div></div>
+          <div class="skill-group"><div class="skill-group-label">Systems Thinking</div><div class="skill-chip-list"><span class="skill-chip critical">Operating Model Design</span><span class="skill-chip critical">Complexity Navigation</span><span class="skill-chip critical">Ambiguity Resolution</span><span class="skill-chip">Value Stream Mapping</span><span class="skill-chip">Org Change Mgmt</span><span class="skill-chip">Platform Thinking</span></div></div>
+          <div class="skill-group"><div class="skill-group-label">Business Acumen</div><div class="skill-chip-list"><span class="skill-chip critical">ROI Framing &amp; Measurement</span><span class="skill-chip critical">Outcome-Based Contracting</span><span class="skill-chip">Value Proposition Design</span><span class="skill-chip">Risk-Adjusted Planning</span><span class="skill-chip">Regulatory Fluency</span></div></div>
+          <div class="skill-group"><div class="skill-group-label">Human Skills</div><div class="skill-chip-list"><span class="skill-chip critical">Stakeholder Trust Building</span><span class="skill-chip critical">Facilitating Co-Creation</span><span class="skill-chip">Executive Communication</span><span class="skill-chip">Cross-functional Influence</span><span class="skill-chip">Intellectual Curiosity</span></div></div>
+        </div>
+        <p style="font-size:var(--text-xs);color:var(--color-text-faint);font-family:var(--font-mono);margin-top:var(--space-2);">Blue chips = critical for near-term relevance &middot; Gray chips = important but less urgent</p>
+      </div>
+
+      <div class="callout" style="margin-top:var(--space-6);">
+        <div class="callout-label">Dialexa / IBM Context</div>
+        <p class="callout-text"><strong>The DPE practice&rsquo;s credibility depends on demonstrating measurable business outcomes&mdash;not just functioning software.</strong> Bain found only 4% of executives believe their organization has a consistently well-understood value proposition. That is the problem IBM DPE should solve before building anything. This positions Dialexa&rsquo;s design and product thinking capabilities as the highest-value entry point in a DPE engagement. The ability to generate actionable clarity from vagueness is the scarcest skill in enterprise product delivery.</p>
+      </div>
+    </section>
+
+    <!-- S8: OUTLOOK -->
+    <section class="section-block fade-in" id="outlook">
+      <div class="section-eyebrow"><span class="num">8</span>6&ndash;12 Month Outlook</div>
+      <h2 class="section-title">Three Scenarios for <em>IBM DPE</em></h2>
+      <p class="section-lead">IBM&rsquo;s platform story has never been stronger&mdash;and its consulting revenue growth has rarely been slower. The resolution of that tension defines the next year.</p>
+      <div class="outlook-grid">
+        <div class="outlook-card outlook-card--bull">
+          <div class="outlook-label">&#8593; Bullish Case</div>
+          <div class="outlook-prob">~25%</div>
+          <p class="outlook-body">Think 2026 announcements convert to pipeline. IBM Bob + watsonx Orchestrate establish category leadership in agentic enterprise development. $12.5B watsonx backlog flows into consulting revenue.</p>
+          <ul class="outlook-drivers">
+            <li>IBM Bob captures enterprise agentic dev mindshare</li>
+            <li>Sovereign Core differentiates in regulated Americas sectors</li>
+            <li>Consulting Advantage ROI becomes client-facing commitment</li>
+          </ul>
+        </div>
+        <div class="outlook-card outlook-card--base">
+          <div class="outlook-label">&#8594; Base Case</div>
+          <div class="outlook-prob">~55%</div>
+          <p class="outlook-body">Consulting growth stays 4&ndash;6% through year-end. IBM defends regulated-enterprise base but continues to lose commercial sector AI transformation share to Accenture and Deloitte.</p>
+          <ul class="outlook-drivers">
+            <li>Americas consulting demand stays muted amid macro uncertainty</li>
+            <li>Outcome-based contracting transition slows revenue recognition</li>
+            <li>AI automation offsets headcount growth, compresses margin</li>
+          </ul>
+        </div>
+        <div class="outlook-card outlook-card--bear">
+          <div class="outlook-label">&#8595; Bearish Case</div>
+          <div class="outlook-prob">~20%</div>
+          <p class="outlook-body">Forrester&rsquo;s AI-as-headwind scenario arrives earlier than 2027. Anthropic COBOL tool matures, pressuring IBM&rsquo;s most defensible segment. Consulting spend deferrals turn flat growth negative.</p>
+          <ul class="outlook-drivers">
+            <li>Agentic tools begin automating discovery + architecture work</li>
+            <li>Enterprise AI project abandonment rate worsens</li>
+            <li>Accenture outcome-based contracts win key IBM accounts</li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout callout--warn">
+        <div class="callout-label">Bottom Line</div>
+        <p class="callout-text"><strong>The consulting industry&rsquo;s biggest inflection point in the next 12 months is not AI adoption&mdash;it is AI accountability.</strong> The firms that establish credible measurement frameworks for AI-delivered outcomes, with shared risk contracts, will capture the next wave of enterprise spend. IBM&rsquo;s Consulting Advantage ROI data and Forrester&rsquo;s Garage study are assets only if operationalized as client-facing commitments rather than marketing claims.</p>
+      </div>
+    </section>
+
+    <!-- S9: ACTIONS -->
+    <section class="section-block fade-in" id="actions">
+      <div class="section-eyebrow"><span class="num">9</span>Action-Oriented POV</div>
+      <h2 class="section-title">What to <em>Actually Do</em> With This</h2>
+      <p class="section-lead">Organized by audience. Insight without action is noise.</p>
+
+      <h3 class="h-sub">For Enterprise Buyers</h3>
+      <ul class="action-list" style="margin-bottom:var(--space-8);">
+        <li class="action-item"><div class="action-num">01</div><div><div class="action-content-title">Demand outcome-based contract components from day one</div><div class="action-content-body">Do not accept a time-and-materials structure for transformational engagements. IBM Consulting Advantage and Garage ROI data exist&mdash;require IBM to put fees at risk against the outcomes they claim. Accenture is already doing this; use it as leverage.</div></div></li>
+        <li class="action-item"><div class="action-num">02</div><div><div class="action-content-title">Insist IBM Enterprise Advantage tooling is scoped at kickoff, not upsold later</div><div class="action-content-body">IBM&rsquo;s delivery acceleration depends on Consulting Advantage&rsquo;s AI assistants being embedded from sprint one. If it is not in the SOW at kickoff, it will not be in the engagement&mdash;and you will pay for a slower, more expensive version of the same work.</div></div></li>
+        <li class="action-item"><div class="action-num">03</div><div><div class="action-content-title">Validate IBM Garage ROI claims against your sector and scale</div><div class="action-content-body">The Forrester study was commissioned by IBM. Request client references from regulated enterprises in your industry at comparable scale before accepting 100%+ ROI as your planning assumption.</div></div></li>
+      </ul>
+
+      <h3 class="h-sub">For IBM Consulting Practitioners (Dialexa / IBM Context)</h3>
+      <ul class="action-list" style="margin-bottom:var(--space-8);">
+        <li class="action-item"><div class="action-num">04</div><div><div class="action-content-title">Lead with clarity generation&mdash;not delivery capability</div><div class="action-content-body">Only 4% of executives believe their organization has a consistently well-understood value proposition (Bain). The highest-value entry point in a DPE engagement is solving the &ldquo;what to build and why&rdquo; problem before any architecture decision is made. This is where Dialexa&rsquo;s design and product thinking earns disproportionate leverage.</div></div></li>
+        <li class="action-item"><div class="action-num">05</div><div><div class="action-content-title">Establish internal measurement before client measurement</div><div class="action-content-body">IBM&rsquo;s external credibility on outcome-based contracting depends on IBM measuring its own delivery performance with the same rigor it promises clients. If the practice cannot produce a sprint-level cost and outcome report internally, it cannot credibly sell outcome-based models externally.</div></div></li>
+        <li class="action-item"><div class="action-num">06</div><div><div class="action-content-title">Position IBM Bob and Sovereign Core as the regulated-industry moat&mdash;proactively</div><div class="action-content-body">IBM Bob Premium&rsquo;s mainframe capability and Sovereign Core&rsquo;s governance-embedded infrastructure are not well understood by procurement teams at target accounts. These are the two assets Accenture and Deloitte cannot replicate at depth. Surface them early in regulated industry conversations.</div></div></li>
+      </ul>
+
+      <h3 class="h-sub">For Product Delivery Team Members</h3>
+      <ul class="action-list">
+        <li class="action-item"><div class="action-num">07</div><div><div class="action-content-title">Build AI-native delivery fluency now&mdash;before it becomes a requirement</div><div class="action-content-body">Prompt engineering, agentic workflow design, and AI-assisted discovery are moving from optional upskills to baseline expectations. IBM Consulting Advantage&rsquo;s productivity gains will be table stakes by Q4 2026. Being ahead of the curve by one skill tier is the most durable career advantage available right now.</div></div></li>
+        <li class="action-item"><div class="action-num">08</div><div><div class="action-content-title">Anchor your value in what AI cannot replace: judgment, clarity, and synthesis</div><div class="action-content-body">The Bain and Forrester data both point to the same gap: organizations can generate AI outputs but cannot evaluate, prioritize, or act on them. The practitioner who can turn ambiguous AI output into an actionable product decision&mdash;with stakeholder alignment&mdash;is the practitioner who is irreplaceable. This is the Fusionist advantage in a post-agentic delivery world.</div></div></li>
+      </ul>
+    </section>
+
+  </main>
+</div>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" aria-hidden="true" style="margin-bottom:8px;"><rect width="32" height="32" rx="4" fill="var(--color-primary)" opacity="0.15"/><rect x="6" y="7" width="20" height="3" rx="1.5" fill="var(--color-primary)"/><rect x="6" y="12" width="14" height="2" rx="1" fill="var(--color-primary)"/><rect x="6" y="16" width="20" height="2" rx="1" fill="var(--color-primary)"/><rect x="6" y="20" width="14" height="2" rx="1" fill="var(--color-primary)"/><rect x="6" y="24" width="20" height="2" rx="1" fill="var(--color-primary)"/></svg>
+      <div>IBM DPE Intelligence Report</div>
+      <div style="color:var(--color-text-faint);margin-top:4px;">May 18, 2026 &middot; Perplexity Research</div>
+    </div>
+    <p class="footer-note">Based on IBM&rsquo;s official product pages, Gartner analyst assessments, Forrester research, Bain surveys, Accenture Pulse of Change, and secondary industry sources. ROI figures from IBM-commissioned studies. Independent validation recommended before using for commercial or investment decisions.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const toggle=document.querySelector('[data-theme-toggle]'),root=document.documentElement;
+  let theme='dark';root.setAttribute('data-theme',theme);
+  if(toggle){toggle.addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';root.setAttribute('data-theme',theme);toggle.setAttribute('aria-label','Switch to '+(theme==='dark'?'light':'dark')+' mode');toggle.innerHTML=theme==='dark'?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>':'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'});}
+})();
+(function(){const bar=document.getElementById('progressBar');if(!bar)return;window.addEventListener('scroll',()=>{const s=document.documentElement.scrollTop,d=document.documentElement.scrollHeight-window.innerHeight;bar.style.width=(d>0?s/d*100:0)+'%';},{passive:true});})();
+(function(){const sections=document.querySelectorAll('section[id]'),links=document.querySelectorAll('.toc-link');if(!sections.length||!links.length)return;const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const id=e.target.id;links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+id));}});},{rootMargin:'-20% 0px -70% 0px'});sections.forEach(s=>obs.observe(s));})();
+(function(){document.querySelectorAll('.accordion-trigger').forEach(t=>{t.addEventListener('click',()=>{const exp=t.getAttribute('aria-expanded')==='true';document.querySelectorAll('.accordion-trigger').forEach(x=>{x.setAttribute('aria-expanded','false');const p=document.getElementById(x.getAttribute('aria-controls'));if(p)p.classList.remove('open');});if(!exp){t.setAttribute('aria-expanded','true');const p=document.getElementById(t.getAttribute('aria-controls'));if(p)p.classList.add('open');}});});})();
+(function(){const fills=document.querySelectorAll('.role-impact-fill');const targets=Array.from(fills).map(f=>({el:f,w:f.getAttribute('data-target')||f.style.width}));const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const idx=targets.findIndex(t=>t.el===e.target);if(idx!==-1)setTimeout(()=>{targets[idx].el.style.width=targets[idx].w;},idx*60);obs.unobserve(e.target);}});},{threshold:.2});fills.forEach(f=>obs.observe(f));})();
+lucide.createIcons();
+</script>
+</body>
+</html>
