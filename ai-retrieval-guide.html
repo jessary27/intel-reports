@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Corpus Retrieval Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   DESIGN TOKENS
+───────────────────────────────────────────── */
+:root, [data-theme="light"] {
+  --color-bg: #f7f6f2;
+  --color-surface: #f9f8f5;
+  --color-surface-2: #fbfbf9;
+  --color-surface-offset: #f0ede8;
+  --color-surface-dynamic: #e6e4df;
+  --color-divider: #dcd9d5;
+  --color-border: #d4d1ca;
+  --color-text: #28251d;
+  --color-text-muted: #7a7974;
+  --color-text-faint: #bab9b4;
+  --color-text-inverse: #f9f8f4;
+  --color-primary: #01696f;
+  --color-primary-hover: #0c4e54;
+  --color-primary-highlight: #cedcd8;
+  --color-accent-2: #964219;
+  --color-accent-3: #437a22;
+  --color-accent-4: #006494;
+  --color-accent-5: #7a39bb;
+  --color-accent-warn: #d19900;
+  --color-error: #a12c7b;
+  --shadow-sm: 0 1px 3px oklch(0.2 0.01 80 / 0.07);
+  --shadow-md: 0 4px 16px oklch(0.2 0.01 80 / 0.09);
+  --shadow-lg: 0 12px 40px oklch(0.2 0.01 80 / 0.13);
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --font-body: 'DM Sans', 'Helvetica Neue', sans-serif;
+  --font-mono: 'DM Mono', 'Courier New', monospace;
+  --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+  --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+  --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+  --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+  --text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+  --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-theme="dark"] {
+  --color-bg: #111110;
+  --color-surface: #161614;
+  --color-surface-2: #1c1b19;
+  --color-surface-offset: #1d1c1a;
+  --color-surface-dynamic: #252421;
+  --color-divider: #262523;
+  --color-border: #323130;
+  --color-text: #cdccca;
+  --color-text-muted: #797876;
+  --color-text-faint: #5a5957;
+  --color-text-inverse: #2b2a28;
+  --color-primary: #4f98a3;
+  --color-primary-hover: #3d8490;
+  --color-primary-highlight: #1e3436;
+  --color-accent-2: #bb653b;
+  --color-accent-3: #6daa45;
+  --color-accent-4: #5591c7;
+  --color-accent-5: #a86fdf;
+  --color-accent-warn: #e8af34;
+  --color-error: #d163a7;
+  --shadow-sm: 0 1px 3px oklch(0 0 0 / 0.25);
+  --shadow-md: 0 4px 16px oklch(0 0 0 / 0.35);
+  --shadow-lg: 0 12px 40px oklch(0 0 0 / 0.45);
+}
+
+/* ─────────────────────────────────────────────
+   BASE
+───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; scroll-padding-top: 80px; }
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.65;
+  min-height: 100dvh;
+}
+img, svg { display: block; max-width: 100%; }
+h1, h2, h3, h4 { text-wrap: balance; line-height: 1.2; }
+p, li { text-wrap: pretty; }
+button { cursor: pointer; font: inherit; background: none; border: none; color: inherit; }
+a { color: var(--color-primary); text-decoration: none; }
+a:hover { color: var(--color-primary-hover); }
+:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 3px; border-radius: var(--radius-sm); }
+
+/* ─────────────────────────────────────────────
+   SCROLL ANIMATIONS
+───────────────────────────────────────────── */
+.fade-in { opacity: 1; }
+@supports (animation-timeline: scroll()) {
+  .fade-in {
+    opacity: 0;
+    animation: fade-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 80%;
+  }
+  @keyframes fade-reveal { from { opacity: 0; } to { opacity: 1; } }
+}
+
+/* ─────────────────────────────────────────────
+   HEADER / NAV
+───────────────────────────────────────────── */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: color-mix(in oklch, var(--color-bg) 85%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-3) var(--space-6);
+}
+.header-inner {
+  max-width: 1280px; margin-inline: auto;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-6);
+}
+.logo {
+  display: flex; align-items: center; gap: var(--space-3);
+  font-size: var(--text-sm); font-weight: 600; letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+.logo svg { flex-shrink: 0; }
+.nav-pills {
+  display: flex; gap: var(--space-1); list-style: none;
+  overflow-x: auto; scrollbar-width: none;
+}
+.nav-pills::-webkit-scrollbar { display: none; }
+.nav-pill {
+  font-size: var(--text-xs); font-weight: 500;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full, 9999px);
+  color: var(--color-text-muted);
+  transition: color var(--transition), background var(--transition);
+  white-space: nowrap;
+}
+.nav-pill:hover { color: var(--color-text); background: var(--color-surface-offset); }
+.nav-pill.active { color: var(--color-primary); background: var(--color-primary-highlight); }
+.header-actions { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; }
+.theme-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  transition: color var(--transition), background var(--transition);
+}
+.theme-btn:hover { color: var(--color-text); background: var(--color-surface-offset); }
+
+/* ─────────────────────────────────────────────
+   HERO
+───────────────────────────────────────────── */
+.hero {
+  padding: var(--space-16) var(--space-6) var(--space-12);
+  max-width: 1280px; margin-inline: auto;
+  display: grid; grid-template-columns: 1fr auto; gap: var(--space-8); align-items: start;
+}
+.hero-eyebrow {
+  font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--color-primary);
+  margin-bottom: var(--space-4);
+}
+.hero-title {
+  font-size: var(--text-2xl); font-weight: 700; letter-spacing: -0.03em;
+  color: var(--color-text); margin-bottom: var(--space-4);
+}
+.hero-title span { color: var(--color-primary); }
+.hero-sub {
+  font-size: var(--text-base); color: var(--color-text-muted); max-width: 60ch;
+  line-height: 1.7; margin-bottom: var(--space-8);
+}
+.hero-stats {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3);
+}
+.stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+.stat-num {
+  font-size: clamp(1.5rem, 2.5vw, 2.5rem);
+  font-weight: 700; letter-spacing: -0.04em;
+  color: var(--color-primary); line-height: 1;
+  margin-bottom: var(--space-1);
+}
+.stat-label {
+  font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.4;
+}
+.hero-viz {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  width: 340px; flex-shrink: 0;
+  box-shadow: var(--shadow-md);
+}
+.pipeline-title {
+  font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--color-text-muted);
+  margin-bottom: var(--space-5);
+}
+.pipeline-step {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+}
+.pipeline-icon {
+  width: 28px; height: 28px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+.pipeline-arrow {
+  display: flex; justify-content: center; color: var(--color-text-faint);
+  margin: -var(--space-1) 0; font-size: 14px;
+}
+
+/* ─────────────────────────────────────────────
+   SECTION WRAPPERS
+───────────────────────────────────────────── */
+.section {
+  padding: var(--space-12) var(--space-6);
+  max-width: 1280px; margin-inline: auto;
+}
+.section-header { margin-bottom: var(--space-8); }
+.section-eyebrow {
+  font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--color-primary);
+  margin-bottom: var(--space-2);
+}
+.section-title {
+  font-size: var(--text-xl); font-weight: 700; letter-spacing: -0.02em;
+  color: var(--color-text); margin-bottom: var(--space-3);
+}
+.section-desc {
+  font-size: var(--text-base); color: var(--color-text-muted); max-width: 64ch;
+  line-height: 1.7;
+}
+.divider {
+  border: none; border-top: 1px solid var(--color-divider);
+  max-width: 1280px; margin-inline: auto; margin-block: 0;
+}
+
+/* ─────────────────────────────────────────────
+   TAKEAWAY BANNER
+───────────────────────────────────────────── */
+.takeaway-banner {
+  background: linear-gradient(135deg in oklch, var(--color-primary-highlight), color-mix(in oklch, var(--color-primary-highlight) 40%, var(--color-bg)));
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6) var(--space-8);
+  display: flex; gap: var(--space-5); align-items: flex-start;
+  margin-bottom: var(--space-10);
+}
+.takeaway-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+.takeaway-content {}
+.takeaway-label {
+  font-size: var(--text-xs); font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--color-primary); margin-bottom: var(--space-2);
+}
+.takeaway-text {
+  font-size: var(--text-base); font-weight: 500; color: var(--color-text); line-height: 1.6;
+}
+
+/* ─────────────────────────────────────────────
+   METHOD CARDS
+───────────────────────────────────────────── */
+.methods-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr)); gap: var(--space-4);
+}
+.method-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), border-color var(--transition);
+  cursor: pointer;
+}
+.method-card:hover { box-shadow: var(--shadow-md); border-color: var(--color-primary); }
+.method-card-header {
+  padding: var(--space-5) var(--space-6) var(--space-4);
+  display: flex; align-items: flex-start; gap: var(--space-4);
+}
+.method-badge {
+  width: 40px; height: 40px; border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.method-name { font-size: var(--text-base); font-weight: 700; color: var(--color-text); margin-bottom: var(--space-1); }
+.method-tagline { font-size: var(--text-sm); color: var(--color-text-muted); }
+.method-body { padding: 0 var(--space-6) var(--space-5); }
+.method-metrics {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+.metric-pill {
+  text-align: center; padding: var(--space-2) var(--space-2);
+  background: var(--color-surface-offset);
+  border-radius: var(--radius-md);
+}
+.metric-value {
+  font-size: var(--text-sm); font-weight: 700; color: var(--color-text); display: block; line-height: 1;
+}
+.metric-label { font-size: var(--text-xs); color: var(--color-text-faint); }
+.method-desc { font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.6; margin-bottom: var(--space-4); }
+.tag-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.tag {
+  font-size: var(--text-xs); font-weight: 500;
+  padding: 3px var(--space-2);
+  border-radius: var(--radius-full, 9999px);
+  border: 1px solid;
+}
+.tag-win { color: var(--color-accent-3); border-color: var(--color-accent-3); background: color-mix(in oklch, var(--color-accent-3) 12%, var(--color-bg)); }
+.tag-warn { color: var(--color-accent-warn); border-color: var(--color-accent-warn); background: color-mix(in oklch, var(--color-accent-warn) 10%, var(--color-bg)); }
+.tag-fail { color: var(--color-error); border-color: var(--color-error); background: color-mix(in oklch, var(--color-error) 10%, var(--color-bg)); }
+
+/* ─────────────────────────────────────────────
+   COMPARISON TABLE
+───────────────────────────────────────────── */
+.table-wrapper {
+  overflow-x: auto; border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-8);
+}
+.data-table {
+  width: 100%; border-collapse: collapse;
+  font-size: var(--text-sm); background: var(--color-surface);
+}
+.data-table thead { background: var(--color-surface-offset); }
+.data-table th {
+  padding: var(--space-3) var(--space-4);
+  text-align: left; font-weight: 600;
+  color: var(--color-text-muted); font-size: var(--text-xs);
+  letter-spacing: 0.04em; text-transform: uppercase;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+.data-table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-divider);
+  vertical-align: top; color: var(--color-text);
+  line-height: 1.5;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover { background: var(--color-surface-2); }
+.cell-highlight { font-weight: 700; color: var(--color-primary); }
+.cell-warn { color: var(--color-accent-warn); font-weight: 600; }
+.cell-bad { color: var(--color-error); }
+.cell-good { color: var(--color-accent-3); font-weight: 600; }
+.cell-mono { font-family: var(--font-mono); font-size: 0.875em; }
+
+/* ─────────────────────────────────────────────
+   BENCHMARK SECTION
+───────────────────────────────────────────── */
+.bench-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(480px, 100%), 1fr)); gap: var(--space-5);
+}
+.bench-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+.bench-title {
+  font-size: var(--text-base); font-weight: 700; color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+.bench-source {
+  font-size: var(--text-xs); color: var(--color-text-faint);
+  font-family: var(--font-mono); margin-bottom: var(--space-4);
+}
+.bar-chart { display: flex; flex-direction: column; gap: var(--space-3); }
+.bar-row {}
+.bar-label {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: var(--space-1);
+}
+.bar-name { font-size: var(--text-sm); color: var(--color-text-muted); }
+.bar-value { font-size: var(--text-sm); font-weight: 700; font-family: var(--font-mono); }
+.bar-track {
+  height: 8px; border-radius: var(--radius-full, 9999px);
+  background: var(--color-surface-offset); overflow: hidden;
+}
+.bar-fill {
+  height: 100%; border-radius: var(--radius-full, 9999px);
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─────────────────────────────────────────────
+   EVALUATION METRICS
+───────────────────────────────────────────── */
+.metrics-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: var(--space-4);
+}
+.metric-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+.metric-icon { font-size: 28px; margin-bottom: var(--space-3); }
+.metric-name { font-size: var(--text-sm); font-weight: 700; color: var(--color-text); margin-bottom: var(--space-1); }
+.metric-formula {
+  font-size: var(--text-xs); font-family: var(--font-mono);
+  background: var(--color-surface-offset); color: var(--color-primary);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-3); display: block;
+}
+.metric-desc { font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.6; }
+
+/* ─────────────────────────────────────────────
+   DECISION FRAMEWORK
+───────────────────────────────────────────── */
+.decision-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: var(--space-4);
+}
+.decision-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+.decision-condition {
+  font-size: var(--text-sm); font-weight: 600; color: var(--color-text);
+  margin-bottom: var(--space-3); line-height: 1.4;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--color-primary);
+}
+.decision-rec {
+  font-size: var(--text-sm); color: var(--color-text-muted);
+  background: var(--color-surface-offset);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  font-family: var(--font-mono);
+  line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────
+   SCALE COMPARISON
+───────────────────────────────────────────── */
+.scale-stack { display: flex; flex-direction: column; gap: var(--space-3); }
+.scale-row {
+  display: grid; grid-template-columns: 180px 1fr 1fr 1fr 1fr;
+  gap: var(--space-3); align-items: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition);
+}
+.scale-row:hover { box-shadow: var(--shadow-md); }
+.scale-row.header-row {
+  background: var(--color-surface-offset);
+  padding-block: var(--space-2);
+}
+.scale-label { font-size: var(--text-sm); font-weight: 700; color: var(--color-text); }
+.scale-cell {
+  font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.4;
+}
+
+/* ─────────────────────────────────────────────
+   TAKEAWAYS SECTION
+───────────────────────────────────────────── */
+.takeaways-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: var(--space-4);
+}
+.takeaway-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5) var(--space-6);
+  display: flex; gap: var(--space-4); align-items: flex-start;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition), border-color var(--transition);
+}
+.takeaway-card:hover { box-shadow: var(--shadow-md); border-color: var(--color-primary); }
+.takeaway-num {
+  width: 28px; height: 28px; border-radius: var(--radius-full, 9999px);
+  background: var(--color-primary-highlight); color: var(--color-primary);
+  font-size: var(--text-sm); font-weight: 800; font-family: var(--font-mono);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.takeaway-card-text {
+  font-size: var(--text-sm); color: var(--color-text-muted); line-height: 1.65;
+}
+.takeaway-card-text strong { color: var(--color-text); }
+
+/* ─────────────────────────────────────────────
+   HYBRID PIPELINE
+───────────────────────────────────────────── */
+.pipeline-full {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-md);
+}
+.pipeline-stages {
+  display: flex; flex-direction: column; gap: 0;
+}
+.p-stage {
+  position: relative;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-6);
+  background: var(--color-surface-2);
+  margin-bottom: var(--space-2);
+}
+.p-stage-header {
+  display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3);
+}
+.p-stage-num {
+  width: 32px; height: 32px;
+  background: var(--color-primary-highlight);
+  color: var(--color-primary); border-radius: var(--radius-full, 9999px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--text-sm); font-weight: 800; font-family: var(--font-mono); flex-shrink: 0;
+}
+.p-stage-title { font-size: var(--text-base); font-weight: 700; color: var(--color-text); }
+.p-stage-sub { font-size: var(--text-xs); color: var(--color-text-muted); }
+.p-stage-detail {
+  font-size: var(--text-sm); color: var(--color-text-muted);
+  display: flex; gap: var(--space-6); flex-wrap: wrap;
+}
+.p-detail-item {}
+.p-detail-label { font-size: var(--text-xs); color: var(--color-text-faint); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-1); }
+.p-detail-val { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--color-primary); }
+.p-arrow {
+  text-align: center; color: var(--color-text-faint); font-size: 20px;
+  padding: var(--space-1) 0; line-height: 1;
+}
+
+/* ─────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--color-border);
+  padding: var(--space-8) var(--space-6);
+  max-width: 1280px; margin-inline: auto;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4);
+}
+.footer-left { font-size: var(--text-xs); color: var(--color-text-faint); }
+.footer-badge {
+  font-size: var(--text-xs); font-weight: 600; letter-spacing: 0.05em;
+  color: var(--color-primary); text-transform: uppercase;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-primary-highlight);
+  border-radius: var(--radius-full, 9999px);
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-viz { width: 100%; }
+  .nav-pills { display: none; }
+  .scale-row { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto auto; }
+  .scale-row.header-row { display: none; }
+}
+@media (max-width: 600px) {
+  .hero-stats { grid-template-columns: 1fr; }
+  .takeaway-banner { flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="3" y="3" width="8" height="8" rx="1.5" fill="var(--color-primary)" opacity="0.8"/>
+        <rect x="13" y="3" width="8" height="8" rx="1.5" fill="var(--color-primary)" opacity="0.5"/>
+        <rect x="3" y="13" width="8" height="8" rx="1.5" fill="var(--color-primary)" opacity="0.5"/>
+        <rect x="13" y="13" width="8" height="8" rx="1.5" fill="var(--color-primary)" opacity="0.9"/>
+        <path d="M7 7 L17 17" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+      </svg>
+      AI Retrieval Guide
+    </div>
+    <nav aria-label="Sections">
+      <ul class="nav-pills" role="list">
+        <li><a href="#methods" class="nav-pill">Methods</a></li>
+        <li><a href="#benchmarks" class="nav-pill">Benchmarks</a></li>
+        <li><a href="#evaluation" class="nav-pill">Evaluation</a></li>
+        <li><a href="#scale" class="nav-pill">Scale</a></li>
+        <li><a href="#cost" class="nav-pill">Cost</a></li>
+        <li><a href="#decision" class="nav-pill">Decision Framework</a></li>
+        <li><a href="#hybrid" class="nav-pill">Hybrid Pipeline</a></li>
+        <li><a href="#takeaways" class="nav-pill">Key Takeaways</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <button class="theme-btn" data-theme-toggle aria-label="Toggle theme" title="Toggle light/dark mode">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-content">
+    <p class="hero-eyebrow">Comprehensive Guide · May 2026</p>
+    <h1 class="hero-title" id="hero-title">AI Corpus Search &amp;<br><span>Retrieval Quality</span></h1>
+    <p class="hero-sub">How LLM platforms and agentic workflows retrieve content across directories — evaluation methods, trade-offs, benchmark results, and decision frameworks for six core retrieval paradigms.</p>
+    <div class="hero-stats" role="list">
+      <div class="stat-card fade-in" role="listitem">
+        <div class="stat-num">4%</div>
+        <div class="stat-label">RAG cost vs full-context injection for equivalent accuracy</div>
+      </div>
+      <div class="stat-card fade-in" role="listitem">
+        <div class="stat-num">3.4×</div>
+        <div class="stat-label">GraphRAG accuracy gain on enterprise structural queries</div>
+      </div>
+      <div class="stat-card fade-in" role="listitem">
+        <div class="stat-num">80%</div>
+        <div class="stat-label">Recall floor — below this hallucination rate spikes sharply</div>
+      </div>
+      <div class="stat-card fade-in" role="listitem">
+        <div class="stat-num">60–70%</div>
+        <div class="stat-label">Effective capacity of advertised 1M-token context windows</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-viz" aria-label="Recommended pipeline overview">
+    <p class="pipeline-title">Recommended Default Pipeline</p>
+    <div class="pipeline-step" style="background:color-mix(in oklch,var(--color-accent-4) 12%,var(--color-surface))">
+      <div class="pipeline-icon" style="background:color-mix(in oklch,var(--color-accent-4) 20%,var(--color-surface))">🔤</div>
+      <div>
+        <div style="font-weight:700;font-size:var(--text-sm)">BM25 Sparse Retrieval</div>
+        <div style="font-size:var(--text-xs);color:var(--color-text-muted)">Exact keyword coverage · top 10</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow">+</div>
+    <div class="pipeline-step" style="background:color-mix(in oklch,var(--color-primary) 12%,var(--color-surface))">
+      <div class="pipeline-icon" style="background:color-mix(in oklch,var(--color-primary) 20%,var(--color-surface))">🧠</div>
+      <div>
+        <div style="font-weight:700;font-size:var(--text-sm)">Dense Semantic Retrieval</div>
+        <div style="font-size:var(--text-xs);color:var(--color-text-muted)">Bi-encoder embeddings · top 10</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow">↓ Reciprocal Rank Fusion</div>
+    <div class="pipeline-step" style="background:color-mix(in oklch,var(--color-accent-3) 12%,var(--color-surface))">
+      <div class="pipeline-icon" style="background:color-mix(in oklch,var(--color-accent-3) 20%,var(--color-surface))">🎯</div>
+      <div>
+        <div style="font-weight:700;font-size:var(--text-sm)">Cross-Encoder Reranking</div>
+        <div style="font-size:var(--text-xs);color:var(--color-text-muted)">Joint query-doc scoring · top 5</div>
+      </div>
+    </div>
+    <div class="pipeline-arrow">↓ Context Injection</div>
+    <div class="pipeline-step" style="background:color-mix(in oklch,var(--color-accent-2) 12%,var(--color-surface))">
+      <div class="pipeline-icon" style="background:color-mix(in oklch,var(--color-accent-2) 20%,var(--color-surface))">⚡</div>
+      <div>
+        <div style="font-weight:700;font-size:var(--text-sm)">LLM Generation</div>
+        <div style="font-size:var(--text-xs);color:var(--color-text-muted)">Context-grounded, cited response</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- METHODS -->
+<section class="section fade-in" id="methods" aria-labelledby="methods-title">
+  <div class="section-header">
+    <p class="section-eyebrow">Part 1</p>
+    <h2 class="section-title" id="methods-title">Six Retrieval Paradigms</h2>
+    <p class="section-desc">Each method operates on a fundamentally different retrieval mechanism. The choice has architectural consequences that compound at scale.</p>
+  </div>
+
+  <div class="takeaway-banner" role="note">
+    <div class="takeaway-icon">⚠️</div>
+    <div class="takeaway-content">
+      <p class="takeaway-label">Architectural Warning</p>
+      <p class="takeaway-text">Choosing the wrong retrieval architecture is not a tuning problem — it is an architectural mismatch. Vector similarity and graph traversal answer fundamentally different questions. Getting the choice wrong costs months of engineering time.</p>
+    </div>
+  </div>
+
+  <div class="methods-grid">
+    <!-- BM25 -->
+    <article class="method-card fade-in">
+      <div class="method-card-header">
+        <div class="method-badge" style="background:color-mix(in oklch,var(--color-accent-4) 15%,var(--color-surface))">🔤</div>
+        <div>
+          <div class="method-name">Sparse / BM25</div>
+          <div class="method-tagline">Term-frequency lexical matching</div>
+        </div>
+      </div>
+      <div class="method-body">
+        <div class="method-metrics">
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-3)">Fast</span><span class="metric-label">Latency</span></div>
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-3)">Low</span><span class="metric-label">Cost</span></div>
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-warn)">Medium</span><span class="metric-label">Accuracy</span></div>
+        </div>
+        <p class="method-desc">Scores documents on TF-IDF statistics. No embeddings, no GPU. Deterministic and interpretable. Outperforms semantic search ~30% of the time on technical documentation with exact terminology.</p>
+        <div class="tag-row">
+          <span class="tag tag-win">Exact keywords</span>
+          <span class="tag tag-win">Named entities</span>
+          <span class="tag tag-win">Deterministic</span>
+          <span class="tag tag-fail">No synonyms</span>
+          <span class="tag tag-fail">No multi-hop</span>
+        </div>
+      </div>
+    </article>
+    <!-- Dense Vector -->
+    <article class="method-card fade-in">
+      <div class="method-card-header">
+        <div class="method-badge" style="background:color-mix(in oklch,var(--color-primary) 15%,var(--color-surface))">🧠</div>
+        <div>
+          <div class="method-name">Dense / Vector Search</div>
+          <div class="method-tagline">Semantic bi-encoder embedding matching</div>
+        </div>
+      </div>
+      <div class="method-body">
+        <div class="method-metrics">
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-3)">Fast</span><span class="metric-label">Latency</span></div>
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-warn)">Medium</span><span class="metric-label">Cost</span></div>
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-3)">Good</span><span class="metric-label">Accuracy</span></div>
+        </div>
+        <p class="method-desc">Encodes text into high-dimensional vectors. Retrieves semantically similar documents even with varied phrasing. Leading vector DBs achieve ~93% recall at 100M vector scale. Chunk size is critical: 256-token chunks with 64-token overlap outperform most alternatives.</p>
+        <div class="tag-row">
+          <span class="tag tag-win">Semantic matching</span>
+          <span class="tag tag-win">Paraphrase handling</span>
+          <span class="tag tag-warn">OOD domain risk</span>
+          <span class="tag tag-fail">No relational reasoning</span>
+        </div>
+      </div>
+    </article>
+    <!-- Hybrid + Reranking -->
+    <article class="method-card fade-in">
+      <div class="method-card-header">
+        <div class="method-badge" style="background:color-mix(in oklch,var(--color-accent-3) 15%,var(--color-surface))">🎯</div>
+        <div>
+          <div class="method-name">Hybrid + Reranking</div>
+          <div class="method-tagline">BM25 + Dense + Cross-encoder</div>
+        </div>
+      </div>
+      <div class="method-body">
+        <div class="method-metrics">
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-warn)">Medium</span><span class="metric-label">Latency</span></div>
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-warn)">Medium</span><span class="metric-label">Cost</span></div>
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-3)">Best</span><span class="metric-label">Accuracy</span></div>
+        </div>
+        <p class="method-desc">Stage 1: fuse BM25 + dense retrieval via Reciprocal Rank Fusion (top 20). Stage 2: cross-encoder reranker scores full [query, doc] pairs → top 5. Improves Context Precision 15–30%. Reduces hallucination rates from 31.7% to 18.3% vs. post-filtering.</p>
+        <div class="tag-row">
+          <span class="tag tag-win">Default enterprise architecture</span>
+          <span class="tag tag-win">Best precision+recall</span>
+          <span class="tag tag-warn">Engineering complexity</span>
+        </div>
+      </div>
+    </article>
+    <!-- GraphRAG -->
+    <article class="method-card fade-in">
+      <div class="method-card-header">
+        <div class="method-badge" style="background:color-mix(in oklch,var(--color-accent-5) 15%,var(--color-surface))">🕸️</div>
+        <div>
+          <div class="method-name">Knowledge Graph / GraphRAG</div>
+          <div class="method-tagline">Typed node + labeled edge traversal</div>
+        </div>
+      </div>
+      <div class="method-body">
+        <div class="method-metrics">
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-warn)">Slow</span><span class="metric-label">Build time</span></div>
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-error)">High</span><span class="metric-label">Build cost</span></div>
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-3)">Best*</span><span class="metric-label">Multi-hop</span></div>
+        </div>
+        <p class="method-desc">Represents knowledge as entities and typed relationships. Deterministic traversal for structural queries. Triples enterprise QA accuracy (16.7% → 56.2%) on structural questions. Underperforms RAG on single-hop detail tasks. ~65% entity coverage is a known limitation of LLM-constructed graphs.</p>
+        <div class="tag-row">
+          <span class="tag tag-win">Multi-hop reasoning</span>
+          <span class="tag tag-win">Provenance chains</span>
+          <span class="tag tag-win">Entity disambiguation</span>
+          <span class="tag tag-fail">High build cost</span>
+          <span class="tag tag-fail">Worse for detail QA</span>
+        </div>
+      </div>
+    </article>
+    <!-- Long Context -->
+    <article class="method-card fade-in">
+      <div class="method-card-header">
+        <div class="method-badge" style="background:color-mix(in oklch,var(--color-accent-warn) 15%,var(--color-surface))">📄</div>
+        <div>
+          <div class="method-name">Long Context Injection</div>
+          <div class="method-tagline">Full corpus in LLM prompt</div>
+        </div>
+      </div>
+      <div class="method-body">
+        <div class="method-metrics">
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-error)">Slow</span><span class="metric-label">Latency</span></div>
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-error)">Highest</span><span class="metric-label">Cost</span></div>
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-warn)">Degrades</span><span class="metric-label">Accuracy</span></div>
+        </div>
+        <p class="method-desc">"Lost in the middle" — accuracy drops 30%+ for content positioned centrally in long contexts. Models advertise 1M token windows but effective capacity is 60–70% of that. 1,250× more expensive per query than well-tuned RAG. 30–60 second latency at 1M tokens. Best for small static corpora under 500 pages.</p>
+        <div class="tag-row">
+          <span class="tag tag-win">Small static corpus</span>
+          <span class="tag tag-win">Codebase reasoning</span>
+          <span class="tag tag-fail">1,250× cost at scale</span>
+          <span class="tag tag-fail">Lost in the middle</span>
+          <span class="tag tag-fail">30–60s latency</span>
+        </div>
+      </div>
+    </article>
+    <!-- Agentic RAG -->
+    <article class="method-card fade-in">
+      <div class="method-card-header">
+        <div class="method-badge" style="background:color-mix(in oklch,var(--color-accent-2) 15%,var(--color-surface))">🤖</div>
+        <div>
+          <div class="method-name">Agentic RAG</div>
+          <div class="method-tagline">LLM-orchestrated iterative retrieval</div>
+        </div>
+      </div>
+      <div class="method-body">
+        <div class="method-metrics">
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-error)">High</span><span class="metric-label">Latency</span></div>
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-error)">Highest</span><span class="metric-label">Cost</span></div>
+          <div class="metric-pill"><span class="metric-value" style="color:var(--color-accent-3)">Best</span><span class="metric-label">Complex tasks</span></div>
+        </div>
+        <p class="method-desc">LLM agent dynamically routes queries, decomposes them, and performs iterative multi-hop retrieval chains. Enables RAG-Fusion (query expansion), HyDE (hypothetical documents), and tool-calling. Used by Perplexity, Harvey AI, Glean. Reserve for complex synthesis tasks where static RAG demonstrably fails.</p>
+        <div class="tag-row">
+          <span class="tag tag-win">Multi-step reasoning</span>
+          <span class="tag tag-win">Heterogeneous sources</span>
+          <span class="tag tag-warn">Non-deterministic</span>
+          <span class="tag tag-fail">Highest latency+cost</span>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- BENCHMARKS -->
+<section class="section fade-in" id="benchmarks" aria-labelledby="bench-title">
+  <div class="section-header">
+    <p class="section-eyebrow">Part 2</p>
+    <h2 class="section-title" id="bench-title">Benchmark Results</h2>
+    <p class="section-desc">Empirical accuracy data from peer-reviewed studies and production benchmarks across standard evaluation datasets.</p>
+  </div>
+
+  <div class="bench-grid">
+    <!-- RAG vs GraphRAG QA -->
+    <div class="bench-card fade-in">
+      <div class="bench-title">QA F1 Score: RAG vs GraphRAG Variants</div>
+      <div class="bench-source">arXiv 2502.11371 · MSU / Oregon / Meta · Llama 3.1-70B</div>
+      <div class="bar-chart" role="list">
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">RAG (NQ — single-hop)</span>
+            <span class="bar-value" style="color:var(--color-accent-3)">68.18%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:68%;background:var(--color-accent-3)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">Community GraphRAG Local (NQ)</span>
+            <span class="bar-value" style="color:var(--color-accent-4)">65.44%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--color-accent-4)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">RAG (HotpotQA — multi-hop)</span>
+            <span class="bar-value" style="color:var(--color-accent-4)">63.88%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:64%;background:var(--color-accent-4)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">Community GraphRAG Local (HotpotQA)</span>
+            <span class="bar-value" style="color:var(--color-accent-3)">64.60%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:65%;background:var(--color-accent-3)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">KG-GraphRAG Triplets only (HotpotQA)</span>
+            <span class="bar-value" style="color:var(--color-error)">30.73%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:31%;background:var(--color-error)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GraphRAG enterprise accuracy -->
+    <div class="bench-card fade-in">
+      <div class="bench-title">Enterprise Query Accuracy: GraphRAG vs Base LLM</div>
+      <div class="bench-source">Diffbot KG-LM Benchmark · 43 enterprise queries</div>
+      <div class="bar-chart" role="list">
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">LLM + Knowledge Graph (GraphRAG)</span>
+            <span class="bar-value" style="color:var(--color-accent-3)">56.2%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:56%;background:var(--color-accent-3)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">LLM without Knowledge Graph</span>
+            <span class="bar-value" style="color:var(--color-error)">16.7%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:17%;background:var(--color-error)"></div></div>
+        </div>
+      </div>
+      <p style="font-size:var(--text-xs);color:var(--color-text-faint);margin-top:var(--space-4)">3.4× accuracy gain for operational analytics, KPI tracking, strategic planning queries</p>
+    </div>
+
+    <!-- Multi-hop scaling -->
+    <div class="bench-card fade-in">
+      <div class="bench-title">F1 by Multi-hop Depth: Pre-structured Graph vs RAG</div>
+      <div class="bench-source">CKG Benchmark · 7,928 queries · 45 domains</div>
+      <div class="bar-chart" role="list">
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">CKG (Depth 1)</span>
+            <span class="bar-value" style="color:var(--color-accent-3)">0.374</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:37%;background:var(--color-accent-3)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">RAG (Depth 1)</span>
+            <span class="bar-value" style="color:var(--color-accent-4)">0.312</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:31%;background:var(--color-accent-4)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">CKG (Depth 3)</span>
+            <span class="bar-value" style="color:var(--color-accent-3)">0.631</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:63%;background:var(--color-accent-3)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">RAG (Depth 3)</span>
+            <span class="bar-value" style="color:var(--color-error)">0.241</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:24%;background:var(--color-error)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">CKG (Depth 5)</span>
+            <span class="bar-value" style="color:var(--color-accent-3)">0.772</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:77%;background:var(--color-accent-3)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">RAG (Depth 5)</span>
+            <span class="bar-value" style="color:var(--color-error)">0.187</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:19%;background:var(--color-error)"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Long context degradation -->
+    <div class="bench-card fade-in">
+      <div class="bench-title">Long Context Accuracy Degradation</div>
+      <div class="bench-source">Claude Opus 4.6 multi-needle retrieval benchmark</div>
+      <div class="bar-chart" role="list">
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">Accuracy at 64K tokens</span>
+            <span class="bar-value" style="color:var(--color-accent-3)">~95%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:95%;background:var(--color-accent-3)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">Accuracy at 256K tokens</span>
+            <span class="bar-value" style="color:var(--color-accent-warn)">~92%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:92%;background:var(--color-accent-warn)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">Accuracy at 1M tokens</span>
+            <span class="bar-value" style="color:var(--color-error)">~78%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:78%;background:var(--color-error)"></div></div>
+        </div>
+        <div class="bar-row" role="listitem">
+          <div class="bar-label">
+            <span class="bar-name">Best LongBench models (long context)</span>
+            <span class="bar-value" style="color:var(--color-accent-warn)">50–60%</span>
+          </div>
+          <div class="bar-track"><div class="bar-fill" style="width:55%;background:var(--color-accent-warn)"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Full method comparison table -->
+  <h3 style="font-size:var(--text-base);font-weight:700;color:var(--color-text);margin-bottom:var(--space-4);margin-top:var(--space-8)">Full Method Comparison</h3>
+  <div class="table-wrapper fade-in">
+    <table class="data-table" aria-label="Retrieval method comparison">
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Core Mechanism</th>
+          <th>Single-hop QA</th>
+          <th>Multi-hop</th>
+          <th>Token Cost</th>
+          <th>Latency</th>
+          <th>Best For</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>BM25 Sparse</strong></td>
+          <td>TF-IDF lexical matching</td>
+          <td class="cell-good">Strong (exact terms)</td>
+          <td class="cell-bad">Fails</td>
+          <td class="cell-good">Lowest</td>
+          <td class="cell-good">&lt; 50ms</td>
+          <td>Keyword-heavy, technical docs</td>
+        </tr>
+        <tr>
+          <td><strong>Dense Vector</strong></td>
+          <td>Cosine similarity in embedding space</td>
+          <td class="cell-good">Good</td>
+          <td class="cell-warn">Marginal</td>
+          <td class="cell-good">Low</td>
+          <td class="cell-good">&lt; 100ms</td>
+          <td>Semantic search, varied phrasing</td>
+        </tr>
+        <tr>
+          <td><strong>Hybrid + Reranker</strong></td>
+          <td>BM25 + Dense + Cross-encoder</td>
+          <td class="cell-highlight">Best</td>
+          <td class="cell-good">Good</td>
+          <td class="cell-warn">Medium</td>
+          <td class="cell-warn">200–500ms</td>
+          <td>Default enterprise production</td>
+        </tr>
+        <tr>
+          <td><strong>ColBERT (Late Interaction)</strong></td>
+          <td>Per-token MaxSim matching</td>
+          <td class="cell-good">Very good</td>
+          <td class="cell-good">Good</td>
+          <td class="cell-warn">Medium</td>
+          <td class="cell-warn">100–300ms</td>
+          <td>Middle ground: accuracy + speed</td>
+        </tr>
+        <tr>
+          <td><strong>Knowledge Graph</strong></td>
+          <td>Typed node + edge traversal</td>
+          <td class="cell-bad">Weaker on detail</td>
+          <td class="cell-highlight">Best (structural)</td>
+          <td class="cell-good">Low (at query time)</td>
+          <td class="cell-warn">Variable</td>
+          <td>Structural, multi-hop, compliance</td>
+        </tr>
+        <tr>
+          <td><strong>Long Context Injection</strong></td>
+          <td>Full corpus in LLM prompt</td>
+          <td class="cell-warn">Degrades at scale</td>
+          <td class="cell-warn">OK for small corpus</td>
+          <td class="cell-bad">1,250× higher</td>
+          <td class="cell-bad">30–60s at 1M tokens</td>
+          <td>&lt;500 page static corpus</td>
+        </tr>
+        <tr>
+          <td><strong>Agentic RAG</strong></td>
+          <td>LLM-orchestrated multi-step retrieval</td>
+          <td class="cell-good">Good</td>
+          <td class="cell-highlight">Best (complex)</td>
+          <td class="cell-bad">Highest (multiple calls)</td>
+          <td class="cell-bad">10–120s per chain</td>
+          <td>Complex synthesis, heterogeneous sources</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- EVALUATION -->
+<section class="section fade-in" id="evaluation" aria-labelledby="eval-title">
+  <div class="section-header">
+    <p class="section-eyebrow">Part 3</p>
+    <h2 class="section-title" id="eval-title">Evaluation Framework</h2>
+    <p class="section-desc">Retrieval quality measurement requires both quantitative metrics and end-to-end RAG evaluation. RAGAS provides the dominant automated framework.</p>
+  </div>
+
+  <h3 style="font-size:var(--text-base);font-weight:700;color:var(--color-text);margin-bottom:var(--space-5)">Core Retrieval Metrics</h3>
+  <div class="metrics-grid">
+    <div class="metric-card fade-in">
+      <div class="metric-icon">🎯</div>
+      <div class="metric-name">Recall@K</div>
+      <code class="metric-formula">|relevant ∩ top_K| / |relevant|</code>
+      <p class="metric-desc">Most critical production metric. Measures what fraction of truly relevant documents appear in top K results. Below 80% recall, hallucination rates spike significantly. Optimize first.</p>
+    </div>
+    <div class="metric-card fade-in">
+      <div class="metric-icon">📌</div>
+      <div class="metric-name">Precision@K</div>
+      <code class="metric-formula">|relevant ∩ top_K| / K</code>
+      <p class="metric-desc">Fraction of top-K results that are actually relevant. Optimized when irrelevant results harm UX. High precision reduces hallucination from stale context injection.</p>
+    </div>
+    <div class="metric-card fade-in">
+      <div class="metric-icon">🥇</div>
+      <div class="metric-name">MRR</div>
+      <code class="metric-formula">mean(1 / rank_of_first_relevant)</code>
+      <p class="metric-desc">Mean Reciprocal Rank. Focuses on where the first correct result appears. Common in QA systems where users read only top results.</p>
+    </div>
+    <div class="metric-card fade-in">
+      <div class="metric-icon">📊</div>
+      <div class="metric-name">NDCG@K</div>
+      <code class="metric-formula">DCG@K / IDCG@K</code>
+      <p class="metric-desc">Normalized Discounted Cumulative Gain. Handles graded relevance. Discounts results by position. Used when ranking order matters, not just presence.</p>
+    </div>
+    <div class="metric-card fade-in">
+      <div class="metric-icon">✅</div>
+      <div class="metric-name">Hit Rate</div>
+      <code class="metric-formula">1 if any relevant in top_K else 0</code>
+      <p class="metric-desc">Binary: did retrieval surface at least one relevant result? Useful for simple found/not-found evaluation. Misses ranking quality.</p>
+    </div>
+    <div class="metric-card fade-in">
+      <div class="metric-icon">🗺️</div>
+      <div class="metric-name">MAP</div>
+      <code class="metric-formula">mean(avg precision per query)</code>
+      <p class="metric-desc">Mean Average Precision. Holistic benchmark comparison metric — used by BEIR and TREC. Expensive to compute but definitive for cross-system comparisons.</p>
+    </div>
+  </div>
+
+  <h3 style="font-size:var(--text-base);font-weight:700;color:var(--color-text);margin-top:var(--space-10);margin-bottom:var(--space-5)">RAGAS End-to-End Evaluation</h3>
+  <div class="table-wrapper fade-in">
+    <table class="data-table" aria-label="RAGAS evaluation dimensions">
+      <thead>
+        <tr>
+          <th>RAGAS Dimension</th>
+          <th>What It Measures</th>
+          <th>Formula</th>
+          <th>Target Score</th>
+          <th>If Low → Fix</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Faithfulness</strong></td>
+          <td>Are all response claims supported by retrieved context?</td>
+          <td class="cell-mono">supported claims / total claims</td>
+          <td class="cell-good">&gt; 0.85</td>
+          <td>Prompt constraints; stronger model</td>
+        </tr>
+        <tr>
+          <td><strong>Answer Relevance</strong></td>
+          <td>Does the answer actually address the query?</td>
+          <td class="cell-mono">LLM-scored relevance 0–1</td>
+          <td class="cell-good">&gt; 0.80</td>
+          <td>Query reformulation; prompt engineering</td>
+        </tr>
+        <tr>
+          <td><strong>Context Recall</strong></td>
+          <td>Did retrieval surface the right documents?</td>
+          <td class="cell-mono">attributed sentences / ground truth sentences</td>
+          <td class="cell-good">&gt; 0.80</td>
+          <td>Improve chunking; add hybrid search</td>
+        </tr>
+        <tr>
+          <td><strong>Context Precision</strong></td>
+          <td>Was retrieved context free of irrelevant content?</td>
+          <td class="cell-mono">useful chunks / total chunks retrieved</td>
+          <td class="cell-good">&gt; 0.70</td>
+          <td>Add reranker; reduce K; tighten filters</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="takeaway-banner fade-in" role="note">
+    <div class="takeaway-icon">🔬</div>
+    <div class="takeaway-content">
+      <p class="takeaway-label">Hallucination Priority Stack</p>
+      <p class="takeaway-text">Fix retrieval first. Retrieval failures are the most common cause — and the highest-ROI fix. Then: constrain generation → add citations → verify outputs → route to human review. Naive implementations produce 15–25% hallucination rates; well-engineered systems reduce this to under 3%.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SCALE -->
+<section class="section fade-in" id="scale" aria-labelledby="scale-title">
+  <div class="section-header">
+    <p class="section-eyebrow">Part 4</p>
+    <h2 class="section-title" id="scale-title">Scale Differences</h2>
+    <p class="section-desc">Corpus size is the primary architectural driver. Method selection should change dramatically as data volume grows.</p>
+  </div>
+  <div class="scale-stack" role="list" aria-label="Scale comparison">
+    <div class="scale-row header-row" aria-hidden="true">
+      <div class="scale-label" style="font-size:var(--text-xs);color:var(--color-text-faint);text-transform:uppercase;letter-spacing:0.06em">Scale</div>
+      <div class="scale-cell" style="font-size:var(--text-xs);color:var(--color-text-faint);text-transform:uppercase;letter-spacing:0.06em">Preferred Method</div>
+      <div class="scale-cell" style="font-size:var(--text-xs);color:var(--color-text-faint);text-transform:uppercase;letter-spacing:0.06em">Context Injection</div>
+      <div class="scale-cell" style="font-size:var(--text-xs);color:var(--color-text-faint);text-transform:uppercase;letter-spacing:0.06em">GraphRAG</div>
+      <div class="scale-cell" style="font-size:var(--text-xs);color:var(--color-text-faint);text-transform:uppercase;letter-spacing:0.06em">Typical Latency</div>
+    </div>
+    <div class="scale-row fade-in" role="listitem">
+      <div class="scale-label">📄 &lt; 500 pages<br><span style="font-size:var(--text-xs);color:var(--color-text-faint);font-weight:400">Single document</span></div>
+      <div class="scale-cell"><strong style="color:var(--color-text)">Direct injection or simple vector</strong><br>Minimal complexity justified</div>
+      <div class="scale-cell"><span style="color:var(--color-accent-3);font-weight:600">✓ Viable</span><br>Static corpora fit in context budget</div>
+      <div class="scale-cell"><span style="color:var(--color-error)">✗ Unjustified</span><br>Build cost > benefit</div>
+      <div class="scale-cell"><span style="color:var(--color-accent-3);font-weight:600">&lt; 5s</span></div>
+    </div>
+    <div class="scale-row fade-in" role="listitem">
+      <div class="scale-label">🗂️ 500–10K docs<br><span style="font-size:var(--text-xs);color:var(--color-text-faint);font-weight:400">Single directory</span></div>
+      <div class="scale-cell"><strong style="color:var(--color-text)">Dense retrieval + reranker</strong><br>256-token chunks, 64-token overlap</div>
+      <div class="scale-cell"><span style="color:var(--color-accent-warn);font-weight:600">⚡ Marginal</span><br>Only for curated subsets</div>
+      <div class="scale-cell"><span style="color:var(--color-accent-warn);font-weight:600">If &gt;20% multi-hop</span><br>Domain-specific only</div>
+      <div class="scale-cell"><span style="color:var(--color-accent-3);font-weight:600">0.5–2s</span></div>
+    </div>
+    <div class="scale-row fade-in" role="listitem">
+      <div class="scale-label">🏢 10K–1M docs<br><span style="font-size:var(--text-xs);color:var(--color-text-faint);font-weight:400">Multi-directory</span></div>
+      <div class="scale-cell"><strong style="color:var(--color-text)">Hybrid + cross-encoder reranker</strong><br>+23% accuracy vs. traditional RAG</div>
+      <div class="scale-cell"><span style="color:var(--color-error)">✗ Not viable</span><br>Volume exceeds context budget</div>
+      <div class="scale-cell"><span style="color:var(--color-accent-warn);font-weight:600">Structured domains only</span><br>Finance, legal, biomedical</div>
+      <div class="scale-cell"><span style="color:var(--color-accent-warn);font-weight:600">0.5–1.5s</span></div>
+    </div>
+    <div class="scale-row fade-in" role="listitem">
+      <div class="scale-label">🌐 1M+ docs<br><span style="font-size:var(--text-xs);color:var(--color-text-faint);font-weight:400">Enterprise multi-repo</span></div>
+      <div class="scale-cell"><strong style="color:var(--color-text)">Hybrid + reranking + query routing</strong><br>Sharded indices, pre-filtering</div>
+      <div class="scale-cell"><span style="color:var(--color-error)">✗ Impossible</span><br>Privacy + cost prohibitive</div>
+      <div class="scale-cell"><span style="color:var(--color-accent-3);font-weight:600">Sub-domain justifiable</span><br>Org charts, regulatory trees</div>
+      <div class="scale-cell"><span style="color:var(--color-accent-warn);font-weight:600">0.5–2s</span></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- COST -->
+<section class="section fade-in" id="cost" aria-labelledby="cost-title">
+  <div class="section-header">
+    <p class="section-eyebrow">Part 5</p>
+    <h2 class="section-title" id="cost-title">Token Efficiency &amp; Cost</h2>
+    <p class="section-desc">Cost differences between retrieval methods are not marginal — they span multiple orders of magnitude at production query volumes.</p>
+  </div>
+  <div class="table-wrapper fade-in">
+    <table class="data-table" aria-label="Token cost comparison">
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Approx. Tokens/Query</th>
+          <th>Cost/Query (est.)</th>
+          <th>Latency</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>BM25 Only</strong></td>
+          <td class="cell-mono cell-good">Minimal</td>
+          <td class="cell-good">&lt; $0.001</td>
+          <td class="cell-good">&lt; 50ms</td>
+          <td>No LLM embedding cost; index only</td>
+        </tr>
+        <tr>
+          <td><strong>Dense RAG (standard)</strong></td>
+          <td class="cell-mono">~3,000</td>
+          <td>~$0.009</td>
+          <td class="cell-good">0.5–1s</td>
+          <td>FAISS + Claude baseline estimate</td>
+        </tr>
+        <tr>
+          <td><strong>GraphRAG (Microsoft)</strong></td>
+          <td class="cell-mono cell-warn">~3,450</td>
+          <td class="cell-warn">~$0.013</td>
+          <td>1–3s</td>
+          <td>Higher due to graph prompting overhead</td>
+        </tr>
+        <tr>
+          <td><strong>Pre-structured Graph (CKG)</strong></td>
+          <td class="cell-mono cell-good">~269</td>
+          <td class="cell-good">~$0.001</td>
+          <td class="cell-good">&lt; 0.5s</td>
+          <td>11× more token-efficient than standard RAG</td>
+        </tr>
+        <tr>
+          <td><strong>Long Context (200K tokens)</strong></td>
+          <td class="cell-mono cell-bad">200,000+</td>
+          <td class="cell-bad">~$0.40–$0.80</td>
+          <td class="cell-bad">10–30s</td>
+          <td>Gemini 3.0 Pro doubles cost above 200K</td>
+        </tr>
+        <tr>
+          <td><strong>Long Context (1M tokens)</strong></td>
+          <td class="cell-mono cell-bad">1,000,000</td>
+          <td class="cell-bad">~$1.25–$5.00</td>
+          <td class="cell-bad">30–60s</td>
+          <td class="cell-bad">1,250× more than well-tuned RAG</td>
+        </tr>
+        <tr>
+          <td><strong>Agentic RAG (multi-step)</strong></td>
+          <td class="cell-mono cell-bad">3,000+ per step</td>
+          <td class="cell-bad">~$0.05–$0.50</td>
+          <td class="cell-bad">10–120s</td>
+          <td>Multiple LLM calls per query chain</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="takeaway-banner fade-in" role="note" style="margin-top:var(--space-6)">
+    <div class="takeaway-icon">💰</div>
+    <div class="takeaway-content">
+      <p class="takeaway-label">The Cost Reality</p>
+      <p class="takeaway-text">RAG + GPT-4 delivers superior performance at 4% of the cost of full context window injection. One documented enterprise case: RAG was 67% more accurate on synthesis queries, with 8× lower latency and 94% lower cost than a pure long-context approach.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- DECISION FRAMEWORK -->
+<section class="section fade-in" id="decision" aria-labelledby="decision-title">
+  <div class="section-header">
+    <p class="section-eyebrow">Part 6</p>
+    <h2 class="section-title" id="decision-title">Decision Framework</h2>
+    <p class="section-desc">Match retrieval architecture to query distribution. Run a representative sample of production queries through the classification below.</p>
+  </div>
+
+  <div class="decision-grid">
+    <div class="decision-card fade-in">
+      <div class="decision-condition">Small static corpus (&lt;500 pages), simple Q&A, no privacy constraints</div>
+      <div class="decision-rec">Direct context injection<br>OR simple dense vector retrieval</div>
+    </div>
+    <div class="decision-card fade-in">
+      <div class="decision-condition">Large enterprise knowledge base with varied query types</div>
+      <div class="decision-rec">Hybrid BM25 + Dense<br>+ Cross-encoder reranker (default)</div>
+    </div>
+    <div class="decision-card fade-in">
+      <div class="decision-condition">&gt;20% multi-hop, structural, or relational queries</div>
+      <div class="decision-rec">Add GraphRAG layer<br>to hybrid pipeline</div>
+    </div>
+    <div class="decision-card fade-in">
+      <div class="decision-condition">Compliance, regulated environment, audit requirements</div>
+      <div class="decision-rec">Knowledge graph<br>with provenance chains</div>
+    </div>
+    <div class="decision-card fade-in">
+      <div class="decision-condition">Complex research, multi-source synthesis, iterative reasoning</div>
+      <div class="decision-rec">Agentic RAG<br>with iterative retrieval</div>
+    </div>
+    <div class="decision-card fade-in">
+      <div class="decision-condition">Rapidly changing knowledge, frequent updates</div>
+      <div class="decision-rec">RAG over fine-tuning (always)<br>Graph for static structural data only</div>
+    </div>
+    <div class="decision-card fade-in">
+      <div class="decision-condition">Cost-constrained production, latency &lt;1s required</div>
+      <div class="decision-rec">Hybrid + cross-encoder<br>(skip LLM reranking)</div>
+    </div>
+    <div class="decision-card fade-in">
+      <div class="decision-condition">Highest accuracy regardless of cost (priority queries)</div>
+      <div class="decision-rec">Integrate RAG + GraphRAG<br>+ long context per query type</div>
+    </div>
+  </div>
+
+  <h3 style="font-size:var(--text-base);font-weight:700;color:var(--color-text);margin-top:var(--space-10);margin-bottom:var(--space-5)">Query-Type Diagnostic</h3>
+  <div class="table-wrapper fade-in">
+    <table class="data-table" aria-label="Query type routing table">
+      <thead>
+        <tr>
+          <th>Query Characteristic</th>
+          <th>Example</th>
+          <th>Route To</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Single focal concept, semantic matching</td>
+          <td>"What is the return policy for damaged items?"</td>
+          <td class="cell-good">Dense vector retrieval</td>
+        </tr>
+        <tr>
+          <td>Exact terminology, named entities, product codes</td>
+          <td>"Find documents referencing Contract ID C-2024-0312"</td>
+          <td class="cell-good">BM25 or Hybrid</td>
+        </tr>
+        <tr>
+          <td>Multi-entity relationship traversal</td>
+          <td>"Which customers have active subscriptions AND open tickets AND recent purchases?"</td>
+          <td class="cell-highlight">Knowledge Graph</td>
+        </tr>
+        <tr>
+          <td>Aggregation over structural membership</td>
+          <td>"Total revenue across all subsidiaries of Acme Corp"</td>
+          <td class="cell-highlight">Knowledge Graph</td>
+        </tr>
+        <tr>
+          <td>Global thematic summary of large corpus</td>
+          <td>"What are the main themes across our research archive?"</td>
+          <td class="cell-highlight">GraphRAG Global or Agentic</td>
+        </tr>
+        <tr>
+          <td>Complex cross-source synthesis, iterative</td>
+          <td>"Compare regulatory approaches across 5 jurisdictions, synthesize gaps"</td>
+          <td class="cell-highlight">Agentic RAG</td>
+        </tr>
+        <tr>
+          <td>Small pre-curated static document set</td>
+          <td>"What did the board say about acquisition strategy in Q3 board minutes?"</td>
+          <td class="cell-warn">Long context injection</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- HYBRID PIPELINE -->
+<section class="section fade-in" id="hybrid" aria-labelledby="hybrid-title">
+  <div class="section-header">
+    <p class="section-eyebrow">Part 7</p>
+    <h2 class="section-title" id="hybrid-title">The Recommended Hybrid Pipeline</h2>
+    <p class="section-desc">The 2025–2026 production consensus for enterprise systems. RAG + GraphRAG integration improves F1 by 6.4% over either method alone.</p>
+  </div>
+  <div class="pipeline-full fade-in">
+    <div class="pipeline-stages">
+      <div class="p-stage">
+        <div class="p-stage-header">
+          <div class="p-stage-num">1</div>
+          <div>
+            <div class="p-stage-title">Hybrid Retrieval — Cast Wide Net</div>
+            <div class="p-stage-sub">BM25 + Dense bi-encoder in parallel → Reciprocal Rank Fusion</div>
+          </div>
+        </div>
+        <div class="p-stage-detail">
+          <div class="p-detail-item"><div class="p-detail-label">BM25 retrieves</div><div class="p-detail-val">Top 10 (exact match)</div></div>
+          <div class="p-detail-item"><div class="p-detail-label">Dense retrieves</div><div class="p-detail-val">Top 10 (semantic)</div></div>
+          <div class="p-detail-item"><div class="p-detail-label">Fusion</div><div class="p-detail-val">RRF → Top 20 candidates</div></div>
+          <div class="p-detail-item"><div class="p-detail-label">Chunk size</div><div class="p-detail-val">256 tokens + 64 overlap</div></div>
+        </div>
+      </div>
+      <div class="p-arrow">↓</div>
+      <div class="p-stage">
+        <div class="p-stage-header">
+          <div class="p-stage-num">2</div>
+          <div>
+            <div class="p-stage-title">Cross-Encoder Reranking — Precision Pass</div>
+            <div class="p-stage-sub">Joint [query, document] scoring → select Top 5</div>
+          </div>
+        </div>
+        <div class="p-stage-detail">
+          <div class="p-detail-item"><div class="p-detail-label">Input</div><div class="p-detail-val">Top 20 from Stage 1</div></div>
+          <div class="p-detail-item"><div class="p-detail-label">Output</div><div class="p-detail-val">Top 5 reranked</div></div>
+          <div class="p-detail-item"><div class="p-detail-label">Precision gain</div><div class="p-detail-val">+15–30%</div></div>
+          <div class="p-detail-item"><div class="p-detail-label">Hallucination reduction</div><div class="p-detail-val">31.7% → 18.3%</div></div>
+        </div>
+      </div>
+      <div class="p-arrow">↓</div>
+      <div class="p-stage" style="border-color:var(--color-accent-5);background:color-mix(in oklch,var(--color-accent-5) 5%,var(--color-surface-2))">
+        <div class="p-stage-header">
+          <div class="p-stage-num" style="background:color-mix(in oklch,var(--color-accent-5) 20%,var(--color-surface));color:var(--color-accent-5)">3</div>
+          <div>
+            <div class="p-stage-title">Conditional Routing (Optional)</div>
+            <div class="p-stage-sub">Query classifier routes to specialized retrieval path</div>
+          </div>
+        </div>
+        <div class="p-stage-detail">
+          <div class="p-detail-item"><div class="p-detail-label">Multi-hop / structural</div><div class="p-detail-val">→ GraphRAG layer</div></div>
+          <div class="p-detail-item"><div class="p-detail-label">Small static corpus</div><div class="p-detail-val">→ Long context</div></div>
+          <div class="p-detail-item"><div class="p-detail-label">Complex synthesis</div><div class="p-detail-val">→ Agentic chain</div></div>
+          <div class="p-detail-item"><div class="p-detail-label">Priority query</div><div class="p-detail-val">→ LLM reranker</div></div>
+        </div>
+      </div>
+      <div class="p-arrow">↓</div>
+      <div class="p-stage">
+        <div class="p-stage-header">
+          <div class="p-stage-num">4</div>
+          <div>
+            <div class="p-stage-title">Generation with Grounding</div>
+            <div class="p-stage-sub">Constrained generation with explicit citation requirements</div>
+          </div>
+        </div>
+        <div class="p-stage-detail">
+          <div class="p-detail-item"><div class="p-detail-label">System prompt</div><div class="p-detail-val">Context-only instruction</div></div>
+          <div class="p-detail-item"><div class="p-detail-label">Citation requirement</div><div class="p-detail-val">Inline source attribution</div></div>
+          <div class="p-detail-item"><div class="p-detail-label">Confidence check</div><div class="p-detail-val">&lt;0.6 → human review queue</div></div>
+          <div class="p-detail-item"><div class="p-detail-label">Faithfulness target</div><div class="p-detail-val">&gt;0.85 RAGAS score</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TAKEAWAYS -->
+<section class="section fade-in" id="takeaways" aria-labelledby="takeaways-title">
+  <div class="section-header">
+    <p class="section-eyebrow">Part 8</p>
+    <h2 class="section-title" id="takeaways-title">Key Takeaways</h2>
+    <p class="section-desc">The ten findings that should inform every retrieval architecture decision.</p>
+  </div>
+  <div class="takeaways-grid">
+    <div class="takeaway-card fade-in">
+      <div class="takeaway-num">1</div>
+      <p class="takeaway-card-text"><strong>Measure retrieval first.</strong> Context Recall below 80% is the dominant failure mode — it drives hallucination regardless of how good your generation model is. Fix retrieval before optimizing generation.</p>
+    </div>
+    <div class="takeaway-card fade-in">
+      <div class="takeaway-num">2</div>
+      <p class="takeaway-card-text"><strong>Hybrid + cross-encoder is the default production architecture.</strong> BM25 + Dense + reranker balances precision, recall, and latency across heterogeneous enterprise corpora. This is the proven starting point.</p>
+    </div>
+    <div class="takeaway-card fade-in">
+      <div class="takeaway-num">3</div>
+      <p class="takeaway-card-text"><strong>Long context windows are not a replacement for RAG.</strong> 1,250× more expensive, 30–60s latency at 1M tokens, effective capacity is 60–70% of advertised limits, and accuracy degrades with "lost in the middle" for centrally-positioned content.</p>
+    </div>
+    <div class="takeaway-card fade-in">
+      <div class="takeaway-num">4</div>
+      <p class="takeaway-card-text"><strong>GraphRAG's advantage is query-type conditional.</strong> It triples enterprise accuracy for structural/multi-hop queries but underperforms standard RAG on single-hop detail-heavy tasks. Justify the build cost with a query distribution audit.</p>
+    </div>
+    <div class="takeaway-card fade-in">
+      <div class="takeaway-num">5</div>
+      <p class="takeaway-card-text"><strong>RAG consistently beats fine-tuning for new knowledge.</strong> RAG doubled accuracy over supervised fine-tuning in 2026 multi-hop benchmarks. Fine-tune behavior and style; use RAG for facts and freshness.</p>
+    </div>
+    <div class="takeaway-card fade-in">
+      <div class="takeaway-num">6</div>
+      <p class="takeaway-card-text"><strong>Chunking is the highest-ROI optimization.</strong> 256-token chunks with 64-token overlap outperform most alternatives. This is cheaper and faster to tune than switching embedding models or adding pipeline stages.</p>
+    </div>
+    <div class="takeaway-card fade-in">
+      <div class="takeaway-num">7</div>
+      <p class="takeaway-card-text"><strong>Token efficiency drives long-term cost.</strong> Pre-structured compact knowledge graphs use 11× fewer tokens per query at 4× higher accuracy on structured domains. The architecture choice directly determines your inference bill at scale.</p>
+    </div>
+    <div class="takeaway-card fade-in">
+      <div class="takeaway-num">8</div>
+      <p class="takeaway-card-text"><strong>Agentic RAG is proven but expensive.</strong> Reserve for complex synthesis tasks where static RAG demonstrably fails. Products like Perplexity, Harvey AI, and Glean have productionized this at scale, so the pattern is viable — but latency and cost are real constraints.</p>
+    </div>
+    <div class="takeaway-card fade-in">
+      <div class="takeaway-num">9</div>
+      <p class="takeaway-card-text"><strong>Evaluate with RAGAS on four dimensions.</strong> Faithfulness, Answer Relevance, Context Recall, Context Precision — not just end-user accuracy scores. Each dimension diagnoses a different failure mode and points to a different fix.</p>
+    </div>
+    <div class="takeaway-card fade-in">
+      <div class="takeaway-num">10</div>
+      <p class="takeaway-card-text"><strong>No single method wins everything.</strong> The optimal system is a hybrid tuned to query distribution and cost constraints. RAG and GraphRAG are complementary — 13.6% of queries are exclusively answered by GraphRAG; 11.6% are exclusively answered by RAG on MultiHop-RAG benchmarks.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<footer class="footer">
+  <p class="footer-left">AI Corpus Search &amp; Retrieval Quality Guide · Compiled May 2026 · Sources: TREC 2024 RAG, BEIR, Microsoft BenchmarkQED/GraphRAG, arXiv 2502.11371, Diffbot KG-LM, RAGAS/ARES, Vectara</p>
+  <div class="footer-badge">Comprehensive Guide</div>
+</footer>
+
+<script>
+(function(){
+  const t = document.querySelector('[data-theme-toggle]');
+  const r = document.documentElement;
+  let d = 'dark';
+  r.setAttribute('data-theme', d);
+  if(t) {
+    t.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+    t.addEventListener('click', () => {
+      d = d === 'dark' ? 'light' : 'dark';
+      r.setAttribute('data-theme', d);
+      t.setAttribute('aria-label', 'Switch to ' + (d === 'dark' ? 'light' : 'dark') + ' mode');
+      t.innerHTML = d === 'dark'
+        ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+        : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+    });
+  }
+
+  // Active nav pill on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const pills = document.querySelectorAll('.nav-pill');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting) {
+        pills.forEach(p => p.classList.remove('active'));
+        const active = document.querySelector('.nav-pill[href="#'+e.target.id+'"]');
+        if(active) active.classList.add('active');
+      }
+    });
+  }, { threshold: 0.2 });
+  sections.forEach(s => obs.observe(s));
+})();
+</script>
+</body>
+</html>
